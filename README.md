@@ -1,5 +1,5 @@
 # Trabalho-Javascript-6p
-Eduardo Abrão 
-Gabriel Rufino 
-Guilherme Henrique 
-isabelli
+Eduardo de Oliveira Abrão
+Gabriel Ferreira Rufino
+Guilherme Henrique da Silva
+Isabelli Luiza Cavalcante dos Santos
