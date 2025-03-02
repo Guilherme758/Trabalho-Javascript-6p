@@ -36,10 +36,11 @@ const tbodyFuncionarios = document.querySelector('#tabela-funcionarios > tbody')
 // Insere todos os funcionários chumbados na tabela e cria também os botôes de Visualizar, Editar e Excluir
 funcionarios.forEach(function (funcionario) {
     const linha = tbodyFuncionarios.insertRow();
+    linha.setAttribute('id', funcionario.Cpf)
     linha.innerHTML = `
-        <td>${funcionario.Nome}</td>
-        <td>${funcionario.Cpf}</td>
-        <td>${funcionario.Registro}</td>
+        <td tipo="nome">${funcionario.Nome}</td>
+        <td tipo="cpf">${funcionario.Cpf}</td>
+        <td tipo="registro">${funcionario.Registro}</td>
         <td>
             <button type="button" class="btn btn-sm btn-success btn-visualizar" title="Visualizar">
                 <img src="../Icons/icon-visualizar.svg" width="20" height="20">
@@ -58,6 +59,15 @@ funcionarios.forEach(function (funcionario) {
     })
 }
 
+function atualizaTabelaFuncionarios(funcionario){
+    const linha = document.getElementById(funcionario.Cpf)
+    const nome = linha.querySelector('td[tipo="nome"]')
+    const registro = linha.querySelector('td[tipo="registro"]')
+
+    nome.innerText = funcionario.Nome
+    registro.innerText = funcionario.Registro
+}
+
 criaTabelaFuncionarios(funcionarios)
 
 // Bloco responsável for fazer a lógica do botão de exclusão (Excluir a linha do registro)
@@ -69,7 +79,16 @@ arrayBotoesExcluir.forEach(function (botaoExcluir) {
     botaoExcluir.addEventListener('click', function (event) {
         var resposta = window.confirm("Deseja realmente excluir o usuário?"); // Retorna true caso clique em ok ou false caso clique em cancelar
         if (resposta == true) {
+            var cpfRemovido = event.target.closest("tr").querySelector('td[tipo="cpf"]').innerText
+            
             event.target.closest("tr").remove() // Remove a linha
+            
+            // Remove o funcionário do array
+            funcionarios = funcionarios.filter(function(funcionario){
+                if(funcionario.Cpf != cpfRemovido){
+                    return funcionario
+                }
+            })
         }
     })
 })
@@ -91,19 +110,24 @@ arrayBotoesVisualizar.forEach(function (botaoVisualizar) {
         // Preenche o conteúdo do modal
         const modalBody = document.querySelector('#modal-funcionario .modal-body');
         modalBody.innerHTML = `
-      <p>Nome: ${dadosFuncionario.nome}</p>
-      <p>CPF: ${dadosFuncionario.cpf}</p>
-      <p>Registro: ${dadosFuncionario.registro}</p>
-      <p>Sexo: ${funcionarios.find(f => f.Nome === dadosFuncionario.nome).Sexo}</p>
-      <p>Data de Nascimento: ${funcionarios.find(f => f.Nome === dadosFuncionario.nome).DataNascimento}</p>
-      <p>Cidade: ${funcionarios.find(f => f.Nome === dadosFuncionario.nome).Cidade}</p>
-      <p>Email: ${funcionarios.find(f => f.Nome === dadosFuncionario.nome).Email}</p>
-    `;
+            <p>Nome: ${dadosFuncionario.nome}</p>
+            <p>CPF: ${dadosFuncionario.cpf}</p>
+            <p>Registro: ${dadosFuncionario.registro}</p>
+            <p>Sexo: ${funcionarios.find(f => f.Cpf == dadosFuncionario.cpf).Sexo}</p>
+            <p>Data de Nascimento: ${funcionarios.find(f => f.Cpf == dadosFuncionario.cpf).DataNascimento}</p>
+            <p>Cidade: ${funcionarios.find(f => f.Cpf == dadosFuncionario.cpf).Cidade}</p>
+            <p>Email: ${funcionarios.find(f => f.Cpf == dadosFuncionario.cpf).Email}</p>
+        `
+
+        const buttonAtualizarFuncionario = document.getElementById('btn-atualizar-funcionario')
 
         // Abre o modal
         const modal = document.getElementById('modal-funcionario');
         modal.classList.add('show');
-        modal.style.display = 'block';
+        modal.style.display = 'block';        
+
+        // Esconde o botão de atualizar funcionário
+        buttonAtualizarFuncionario.setAttribute('hidden', '')
     })
 })
 
@@ -125,54 +149,63 @@ const botoesEditar = document.getElementsByClassName('btn-editar')
 
 const arrayBotoesEditar = Array.from(botoesEditar)
 
+var cpfFuncionario = ''
+const buttonAtualizarFuncionario = document.getElementById('btn-atualizar-funcionario')
+const formSubmitAtualizarFuncionario = document.querySelector('#modal-funcionario .modal-footer form')
+
 // TODO: Corrigir a edição dos dados, no momento não está funcionando
 arrayBotoesEditar.forEach(function (botaoEditar) {
     botaoEditar.addEventListener('click', function (event) {
         const modal = document.getElementById('modal-funcionario')
         const modalBody = document.querySelector('#modal-funcionario .modal-body');
         modalBody.innerHTML = `
-            <div class="mb-3 mx-3">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="nome" placeholder="Digite Seu nome">
-            </div>
-            <div class="mb-3 mx-3">
-            <label for="registro" class="form-label">Registro</label>
-            <input type="text" class="form-control" id="registro" placeholder="Descrição">
-            </div>
-            <div class="mb-3 mx-3">
-            <label for="cidade" class="form-label">Cidade</label>
-            <input type="text" class="form-control" id="cidade" placeholder="Ex: São Paulo - SP">
-            </div>
-            <div class="mb-3 mx-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="text" class="form-control" id="email" placeholder="Exemple@email.com">
-            </div>
+            <form>
+                <div class="mb-3 mx-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" placeholder="Digite Seu nome">
+                </div>
+                <div class="mb-3 mx-3">
+                <label for="registro" class="form-label">Registro</label>
+                <input type="text" class="form-control" id="registro" placeholder="Descrição">
+                </div>
+                <div class="mb-3 mx-3">
+                <label for="cidade" class="form-label">Cidade</label>
+                <input type="text" class="form-control" id="cidade" placeholder="Ex: São Paulo - SP">
+                </div>
+                <div class="mb-3 mx-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" placeholder="Exemple@email.com">
+                </div>
+            </form>
         `
-        const cpfFuncionario = event.target.closest("tr").querySelectorAll("td")[1].innerText
+        // Pega o cpf do funcionário que vai ser editado antes de abrir o modal
+        cpfFuncionario = event.target.closest("tr").querySelectorAll("td")[1].innerText
 
+        // Mostra o modal
         modal.classList.add('show');
         modal.style.display = 'block';
+
+        // Mostra o botão de atualizar funcionário
+        buttonAtualizarFuncionario.removeAttribute('hidden')
+    })
+})
+
+formSubmitAtualizarFuncionario.addEventListener('submit', function(event){
+    event.preventDefault() // Impede a página de dar F5 após o submit
+    const nome = document.getElementById('nome')
+    const registro = document.getElementById('registro')
+    const cidade = document.getElementById('cidade')
+    const email = document.getElementById('email')
+
+    funcionarios = funcionarios.map(function(funcionario){
+        if(funcionario['Cpf'] == cpfFuncionario){
+            funcionario['Nome'] = nome.value
+            funcionario['Registro'] = registro.value
+            funcionario['Cidade'] = cidade.value
+            funcionario['Email'] = email.value
         
-        const botaoSubmitAtualizarFuncionario = document.getElementById('btn-atualizar-funcionario')
-
-        botaoSubmitAtualizarFuncionario.addEventListener('click', function(event){
-            event.preventDefault() 
-            const nome = document.getElementById('nome')
-            const registro = document.getElementById('registro')
-            const cidade = document.getElementById('cidade')
-            const email = document.getElementById('email')
-
-            // funcionarios = funcionarios.map(function(funcionario){
-            //     if(funcionario['Cpf'] == cpfFuncionario){
-            //         funcionario['Nome'] = nome
-            //         funcionario['Registro'] = registro
-            //         funcionario['cidade'] = cidade
-            //         funcionario['email'] = email
-            //     }
-            // })
-            console.log('Salvando')
-
-            criaTabelaFuncionarios(funcionarios)
-        })
+            atualizaTabelaFuncionarios(funcionario)
+        }
+        return funcionario
     })
 })

@@ -91,22 +91,13 @@
               <button type="button" class="btn-close btn-fechar-modal" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <p>Nome: ${dadosFuncionario.nome}</p>
-              <p>CPF: ${dadosFuncionario.cpf}</p>
-              <p>Registro: ${dadosFuncionario.registro}</p>
-              <p>Sexo: ${funcionarios.find(f => f.Nome === dadosFuncionario.nome).Sexo}</p>
-              <p>Data de Nascimento: ${funcionarios.find(f => f.Nome === dadosFuncionario.nome).DataNascimento}</p>
-              <p>Cidade: ${funcionarios.find(f => f.Nome === dadosFuncionario.nome).Cidade}</p>
-              <p>Email: ${funcionarios.find(f => f.Nome === dadosFuncionario.nome).Email}</p>
             </div>
             <div class="modal-footer">
-                <div class="mb-3 mx-3">
-                    <button class="btn btn-primary" id="btn-atualizar-funcionario" type="submit">Atualizar Funcionário</button> 
-                  </div>
-                  
+                <form>
+                    <button class="btn btn-primary btn-fechar-modal" id="btn-atualizar-funcionario" type="submit">Atualizar Funcionário</button> 
+                </form>
               <button type="button" class="btn btn-secondary btn-fechar-modal" data-bs-dismiss="modal">Fechar</button>
             </div>
-    
           </div>
         </div>
       </div>
