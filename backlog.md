@@ -2,6 +2,6 @@
 ~~2. Fazer menu que filtra os dados da tabela pelo nome do funcionário~~
 ~~3. Depois testar tudo e validar se precisa fazer algo na parte de cadastro e listagem de funcionários~~
 ~~4. Fazer a parte de vacinas~~
-5. Fazer a parte de Login 
+~~5. Fazer a parte de Login~~
 6. Fazer a parte de perfil
-7. Fazer a toda a parte visual
+7. Fazer toda a parte visual das telas
