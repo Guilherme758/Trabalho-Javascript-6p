@@ -79,56 +79,35 @@
   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
-    <form id="form-cadastro-funcionarios" class="container">
+    <form id="form-cadastro-vacinas" class="container">
       <div class="mb-3 mx-3">
         <label for="nome" class="form-label">Nome</label>
-        <input type="text" class="form-control" id="nome" placeholder="Digite Seu nome">
+        <input type="text" class="form-control" id="nome" placeholder="Nome da vacina">
       </div>
       <div class="mb-3 mx-3">
-        <label for="cpf" class="form-label">CPF</label>
-        <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00">
+        <label for="descricao" class="form-label">Descrição</label>
+        <input type="text" class="form-control" id="descricao" placeholder="Descrição da vacina">
       </div>
       <div class="mb-3 mx-3">
-        <label for="registro" class="form-label">Registro</label>
-        <input type="text" class="form-control" id="registro" placeholder="Descrição">
-      </div>
-      <div class="mb-3 mx-3">
-        <label for="sexo" class="form-label">Sexo</label>
-        <select class="form-select" id="sexo" required>
+        <label for="obrigatoria" class="form-label">Obrigatória</label>
+        <select class="form-select" id="obrigatoria" required>
           <option selected disabled value="">Escolha uma opção</option>
-          <option>Masculino</option>
-          <option>Feminino</option>
-        </select>  
+          <option>Sim</option>
+          <option>Não</option>
+        </select> 
       </div>
       <div class="mb-3 mx-3">
-        <label for="data-nascimento" class="form-label">Data de Nascimento</label>
-        <input type="date" class="form-control" id="data-nascimento">
-      </div>
-      <div class="mb-3 mx-3">
-        <label for="cidade" class="form-label">Cidade</label>
-        <input type="text" class="form-control" id="cidade" placeholder="Ex: São Paulo - SP">
-      </div>
-      <div class="mb-3 mx-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="text" class="form-control" id="email" placeholder="Exemple@email.com">
-      </div>
-      <div class="mb-3 mx-3">
-        <button class="btn btn-primary" id="btn-cadastro-funcionario" type="submit">Cadastrar Funcionário</button>
+        <button class="btn btn-primary" id="btn-cadastro-funcionario" type="submit">Cadastrar Vacina</button>
       </div>
     </form>
-    <script src="../Javascript/cadastro_funcionarios.js"></script>
+    <script src="../Javascript/cadastro_vacinas.js"></script>
     
-    <table id="tabela-funcionarios" class="table">
+    <table id="tabela-vacinas" class="table">
       <thead>
           <tr>
               <th scope="col">Nome</th>
-              <th scope="col">Cpf</th>
-              <th scope="col">Registro</th>
-              <th scope="col">Sexo</th>
-              <th scope="col">Data de Nascimento</th>
-              <th scope="col">Cidade</th>
-              <th scope="col">Email</th> 
-              <th scope="col"></th>           
+              <th scope="col">Descrição</th> 
+              <th scope="col">Obrigatória</th> 
           </tr>
       </thead>
       <tbody>
