@@ -9,7 +9,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Página Inicial</a>
+            <a class="navbar-brand" href="index.html">Página Inicial</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -67,22 +67,24 @@
             </div>
         </div>
     </nav>
-
-
-
-    <form id="form-cadastro-funcionarios" class="container">
+    <form class="d-flex container mt-2" role="search" onsubmit="return false;">
+        <input id = "input-filtrar-nome" class="form-control" type="search" placeholder="Pesquisar" aria-label="Filtrar Nome">
+        <button id = "btn-filtrar-nome" class="btn btn-outline-success" type="button">Filtrar</button>
+    </form>
+    <div id ="div-tabela" class="container">
         <table id="tabela-funcionarios" class="table">
             <thead>
                 <tr>
                     <th scope="col">Nome</th>
                     <th scope="col">Cpf</th>
                     <th scope="col">Registro</th>
+                    <th scope="col">Opções</th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
-    </form>
+    </div>
     <div class="modal fade" id="modal-funcionario" tabindex="-1" aria-labelledby="modal-funcionario-Label" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
