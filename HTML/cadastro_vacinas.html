@@ -80,14 +80,14 @@
   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
-    <form id="form-cadastro-vacinas" class="container">
+    <form id="form-cadastro-vacinas" class="container mt-3">
       <div class="mb-3 mx-3">
         <label for="nome" class="form-label">Nome</label>
-        <input type="text" class="form-control" id="nome" placeholder="Nome da vacina">
+        <input type="text" class="form-control" id="nome" placeholder="Nome da vacina" required>
       </div>
       <div class="mb-3 mx-3">
         <label for="descricao" class="form-label">Descrição</label>
-        <input type="text" class="form-control" id="descricao" placeholder="Descrição da vacina">
+        <input type="text" class="form-control" id="descricao" placeholder="Descrição da vacina" required>
       </div>
       <div class="mb-3 mx-3">
         <label for="obrigatoria" class="form-label">Obrigatória</label>
@@ -103,12 +103,12 @@
     </form>
     <script src="../Javascript/cadastro_vacinas.js"></script>
     
-    <table id="tabela-vacinas" class="table">
+    <table id="tabela-vacinas" class="table container table-bordered border-dark mt-5">
       <thead>
           <tr>
-              <th scope="col">Nome</th>
-              <th scope="col">Descrição</th> 
-              <th scope="col">Obrigatória</th> 
+              <th scope="col" class="text-center">Nome</th>
+              <th scope="col" class="text-center">Descrição</th> 
+              <th scope="col" class="text-center">Obrigatória</th> 
           </tr>
       </thead>
       <tbody>

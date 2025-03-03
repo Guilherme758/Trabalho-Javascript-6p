@@ -11,11 +11,16 @@ form.addEventListener("submit", function(event){
 
     const linha = tabelaFuncionariosBody.insertRow()
     linha.innerHTML = `
-        <td>${nome.value}</td>
-        <td>${descricao.value}</td>
-        <td>${obrigatoria.value}</td>
+        <td class="text-center">${nome.value}</td>
+        <td class="text-center">${descricao.value}</td>
+        <td class="text-center">${obrigatoria.value}</td>
     `
     tabelaFuncionariosBody.appendChild(linha)
 
     alert("Vacina cadastrada!");
+
+    // Limpa os inputs após inserção
+    nome.value = ''
+    descricao.value = ''
+    obrigatoria.value = ''
 })
