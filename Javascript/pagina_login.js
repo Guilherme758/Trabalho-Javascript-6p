@@ -9,16 +9,16 @@ var usuarios = [
     }
 ]
 
-let emailDigitado = document.getElementById("email").value
-let senhaDigitada = document.getElementById("senha").value
+const emailDigitado = document.getElementById("email")
+const senhaDigitada = document.getElementById("senha")
 let mensagem = document.getElementById("mensagem")
 
 const formLogin = document.getElementById('form-cadastro-funcionarios')
 
 formLogin.addEventListener('submit', function(event){
     event.preventDefault()
-    const inputEmail = document.getElementById('email').value.trimEnd().trimStart().toLowerCase()
-    const inputSenha = document.getElementById('senha').value
+    const inputEmail = emailDigitado.value.trimEnd().trimStart().toLowerCase()
+    const inputSenha = senhaDigitada.value
     
     var isLogin = false
 
@@ -35,5 +35,8 @@ formLogin.addEventListener('submit', function(event){
     }
     if(!isLogin){
         alert("Senha ou Email incorretos");
+        
+        //Limpa os inputs
+        senhaDigitada.value = ''
     }
 })

@@ -4,7 +4,8 @@ nav{
 #btn-cadastro-funcionario, 
 #btn-atualizar-funcionario, 
 #btn-filtrar-nome,
-#btn-atualizar-vacina{
+#btn-atualizar-vacina,
+#btn-verifica-usuario{
     background-color: #30553a;
     color: white;
 }
