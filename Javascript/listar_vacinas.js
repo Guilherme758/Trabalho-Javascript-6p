@@ -142,10 +142,10 @@ function criaTabelaVacinas(vacinas) {
         const linha = tbodyvacinas.insertRow();
         linha.setAttribute('id', vacina.ID)
         linha.innerHTML = `
-        <td tipo="nome">${vacina.Nome}</td>
-        <td tipo="descricao">${vacina.Descricao}</td>
-        <td tipo="obrigatoria">${vacina.Obrigatoria}</td>
-        <td>
+        <td tipo="nome" class="text-center">${vacina.Nome}</td>
+        <td tipo="descricao" class="text-center">${vacina.Descricao}</td>
+        <td tipo="obrigatoria" class="text-center">${vacina.Obrigatoria}</td>
+        <td class="text-center">
             <button type="button" class="btn btn-sm btn-success btn-visualizar" title="Visualizar">
                 <img src="../Icons/icon-visualizar.svg" width="20" height="20">
             </button>

@@ -1,7 +1,10 @@
 nav{
     background-color: #30553a;
 }
-#btn-cadastro-funcionario, #btn-atualizar-funcionario, #btn-filtrar-nome{
+#btn-cadastro-funcionario, 
+#btn-atualizar-funcionario, 
+#btn-filtrar-nome,
+#btn-atualizar-vacina{
     background-color: #30553a;
     color: white;
 }
