@@ -76,18 +76,18 @@
             </div>
         </div>
     </nav>
-    <form class="d-flex container mt-2" role="search" onsubmit="return false;">
+    <form class="d-flex container mt-3" role="search" onsubmit="return false;">
         <input id = "input-filtrar-nome" class="form-control" type="search" placeholder="Pesquisar" aria-label="Filtrar Nome">
-        <button id = "btn-filtrar-nome" class="btn btn-outline-success" type="button">Filtrar</button>
+        <button id = "btn-filtrar-nome" class="btn" type="button">Filtrar</button>
     </form>
     <div id ="div-tabela" class="container">
-        <table id="tabela-funcionarios" class="table">
+        <table id="tabela-funcionarios" class="table table-bordered border-dark mt-5">
             <thead>
                 <tr>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Cpf</th>
-                    <th scope="col">Registro</th>
-                    <th scope="col">Opções</th>
+                    <th scope="col" class="text-center">Nome</th>
+                    <th scope="col" class="text-center">Cpf</th>
+                    <th scope="col" class="text-center">Registro</th>
+                    <th scope="col" class="text-center">Opções</th>
                 </tr>
             </thead>
             <tbody>
@@ -105,7 +105,7 @@
             </div>
             <div class="modal-footer">
                 <form>
-                    <button class="btn btn-primary btn-fechar-modal" id="btn-atualizar-funcionario" type="submit">Atualizar Funcionário</button> 
+                    <button class="btn btn-fechar-modal" id="btn-atualizar-funcionario" type="submit">Atualizar Funcionário</button> 
                 </form>
               <button type="button" class="btn btn-secondary btn-fechar-modal" data-bs-dismiss="modal">Fechar</button>
             </div>

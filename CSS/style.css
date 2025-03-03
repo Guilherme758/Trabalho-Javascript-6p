@@ -1,7 +1,7 @@
 nav{
     background-color: #30553a;
 }
-#btn-cadastro-funcionario{
+#btn-cadastro-funcionario, #btn-atualizar-funcionario, #btn-filtrar-nome{
     background-color: #30553a;
     color: white;
 }

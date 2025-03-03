@@ -108,19 +108,19 @@ function botoesDeEditar() {
             <form>
                 <div class="mb-3 mx-3">
                 <label for="nome" class="form-label">Nome</label>
-                <input type="text" class="form-control" id="nome" placeholder="Digite Seu nome">
+                <input type="text" class="form-control" id="nome" placeholder="Digite Seu nome" required>
                 </div>
                 <div class="mb-3 mx-3">
                 <label for="registro" class="form-label">Registro</label>
-                <input type="text" class="form-control" id="registro" placeholder="Descrição">
+                <input type="text" class="form-control" id="registro" placeholder="Descrição" required>
                 </div>
                 <div class="mb-3 mx-3">
                 <label for="cidade" class="form-label">Cidade</label>
-                <input type="text" class="form-control" id="cidade" placeholder="Ex: São Paulo - SP">
+                <input type="text" class="form-control" id="cidade" placeholder="Ex: São Paulo - SP" required>
                 </div>
                 <div class="mb-3 mx-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control" id="email" placeholder="Exemple@email.com">
+                <input type="text" class="form-control" id="email" placeholder="Exemple@email.com" required>
                 </div>
             </form>
         `
@@ -143,10 +143,10 @@ function criaTabelaFuncionarios(funcionarios) {
         const linha = tbodyFuncionarios.insertRow();
         linha.setAttribute('id', funcionario.Cpf)
         linha.innerHTML = `
-        <td tipo="nome">${funcionario.Nome}</td>
-        <td tipo="cpf">${funcionario.Cpf}</td>
-        <td tipo="registro">${funcionario.Registro}</td>
-        <td>
+        <td tipo="nome" class="text-center">${funcionario.Nome}</td>
+        <td tipo="cpf" class="text-center">${funcionario.Cpf}</td>
+        <td tipo="registro" class="text-center">${funcionario.Registro}</td>
+        <td class="text-center">
             <button type="button" class="btn btn-sm btn-success btn-visualizar" title="Visualizar">
                 <img src="../Icons/icon-visualizar.svg" width="20" height="20">
             </button>
