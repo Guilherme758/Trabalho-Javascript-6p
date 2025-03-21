@@ -181,9 +181,9 @@ function atualizaTabelaVacinas(vacina) {
 }
 
 // Bloco responsável por implementar a lógica da barra e botão de pesquisa
-const botaoFiltrarNome = document.getElementById('btn-filtrar-nome')
+// const botaoFiltrarNome = document.getElementById('btn-filtrar-nome')
 const inputFiltrarNome = document.getElementById('input-filtrar-nome')
-botaoFiltrarNome.addEventListener('click', function (event) {
+inputFiltrarNome.addEventListener('change', function (event) {
     const texto = inputFiltrarNome.value.toLowerCase().trimStart().trimEnd()
 
     if (texto != '') {
