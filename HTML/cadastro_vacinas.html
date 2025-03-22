@@ -90,19 +90,22 @@
     <form id="form-cadastro-vacinas" class="container mt-3">
       <div class="mb-3 mx-3">
         <label for="nome" class="form-label">Nome</label>
-        <input type="text" class="form-control" id="nome" placeholder="Nome da vacina" required>
+        <input type="text" class="form-control" id="nome" placeholder="Nome da vacina">
+        <span id="span-nome"></span>
       </div>
       <div class="mb-3 mx-3">
         <label for="descricao" class="form-label">Descrição</label>
-        <input type="text" class="form-control" id="descricao" placeholder="Descrição da vacina" required>
+        <input type="text" class="form-control" id="descricao" placeholder="Descrição da vacina">
+        <span id="span-descricao"></span>
       </div>
       <div class="mb-3 mx-3">
         <label for="obrigatoria" class="form-label">Obrigatória</label>
-        <select class="form-select" id="obrigatoria" required>
+        <select class="form-select" id="obrigatoria">
           <option selected disabled value="">Escolha uma opção</option>
           <option>Sim</option>
           <option>Não</option>
-        </select> 
+        </select>
+        <span id="span-obrigatoria"></span>
       </div>
       <div class="mb-3 mx-3">
         <button class="btn btn-primary" id="btn-cadastro-funcionario" type="submit">Cadastrar Vacina</button>
