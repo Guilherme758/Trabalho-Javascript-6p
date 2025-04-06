@@ -84,22 +84,23 @@ function validaInputs(){
 }
 
 function insertVacina(){
-    const tabelaFuncionariosBody = document.querySelector('#tabela-vacinas > tbody')
+    fetch("http://localhost:3000/vacinas", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            Nome: nome.value,
+            Descricao: descricao.value,
+            Obrigatoria: obrigatoria.value
+        })
+    })
+    .then(
+        alert("Vacina cadastrada!"),
 
-    const linha = tabelaFuncionariosBody.insertRow()
-    linha.innerHTML = `
-        <td class="text-center">${nome.value}</td>
-        <td class="text-center">${descricao.value}</td>
-        <td class="text-center">${obrigatoria.value}</td>
-    `
-    tabelaFuncionariosBody.appendChild(linha)
-
-    alert("Vacina cadastrada!");
-
-    // Limpa os inputs após inserção
-    nome.value = ''
-    descricao.value = ''
-    obrigatoria.value = ''
+        // Limpa os inputs após inserção
+        nome.value = '',
+        descricao.value = '',
+        obrigatoria.value = ''
+    )
 }
 
 form.addEventListener("submit", function(event){
