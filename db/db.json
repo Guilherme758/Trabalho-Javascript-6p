@@ -24,5 +24,37 @@
       "Descricao": "agf",
       "Obrigatoria": "Sim"
     }
+  ],
+  "funcionarios": [
+    {
+      "id": "1045",
+      "Nome": "João",
+      "Cpf": "000.000.000-00",
+      "Registro": "123",
+      "Sexo": "Masculino",
+      "DataNascimento": "2000-01-01",
+      "Cidade": "Pouso Alegre",
+      "Email": "joao@gmail.com"
+    },
+    {
+      "id": "dd07",
+      "Nome": "Guilherme",
+      "Cpf": "001.001.001-01",
+      "Registro": "BAV",
+      "Sexo": "Masculino",
+      "DataNascimento": "2004-01-14",
+      "Cidade": "São Paulo",
+      "Email": "guilherme@gmail.com"
+    },
+    {
+      "id": "5fef",
+      "Nome": "Maria",
+      "Cpf": "222.222.222-22",
+      "Registro": "afv",
+      "Sexo": "Feminino",
+      "DataNascimento": "2000-01-01",
+      "Cidade": "Belo Horizonte",
+      "Email": "maria@gmail.com"
+    }
   ]
 }

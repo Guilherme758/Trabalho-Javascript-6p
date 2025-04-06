@@ -40,8 +40,6 @@ const dataNascimento = document.getElementById('data-nascimento')
 const cidade = document.getElementById('cidade')
 const email = document.getElementById('email')
 
-const tabelaFuncionariosBody = document.querySelector('#tabela-funcionarios > tbody')
-
 function validaInputs(){
     let contErros = 0
 
@@ -106,30 +104,31 @@ function validaInputs(){
 }    
 
 function insertFuncionario(){
-    const linha = tabelaFuncionariosBody.insertRow()
-    const dataNascimentoFormatada = new Date(`${dataNascimento.value} 03:00:00`).toLocaleDateString()
+    fetch("http://localhost:3000/funcionarios", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            Nome: nome.value,
+            Cpf: cpf.value,
+            Registro: registro.value,
+            Sexo: sexo.value,
+            DataNascimento: dataNascimento.value,
+            Cidade: cidade.value,
+            Email: email.value
+        })
+    })
+    .then(
+        alert("Funcionário cadastrado!"),
 
-    linha.innerHTML = `
-        <td class="text-center">${nome.value}</td>
-        <td class="text-center">${cpf.value}</td>
-        <td class="text-center">${registro.value}</td>
-        <td class="text-center">${sexo.value}</td>
-        <td class="text-center">${dataNascimentoFormatada}</td>
-        <td class="text-center">${cidade.value}</td>
-        <td class="text-center">${email.value}</td>
-    `
-    tabelaFuncionariosBody.appendChild(linha)
-
-    alert("Funcionário cadastrado");
-
-    // Limpa os inputs após inserção
-    nome.value = ''
-    cpf.value = ''
-    registro.value = ''
-    sexo.value = ''
-    dataNascimento.value = ''
-    cidade.value = ''
-    email.value = ''
+         // Limpa os inputs após inserção
+        nome.value = '',
+        cpf.value = '',
+        registro.value = '',
+        sexo.value = '',
+        dataNascimento.value = '',
+        cidade.value = '',
+        email.value = ''
+    )
 }
 
 form.addEventListener("submit", function(event){
