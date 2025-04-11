@@ -42,6 +42,13 @@ async function getFuncionarios(){
     return await response.json()
 }
 
+function deleteFuncionario(id){
+    const response = fetch(`http://localhost:3000/funcionarios/${id}`, {
+        "method": "DELETE"
+    })
+    return response
+}
+
 // Bloco responsável for fazer a lógica do botão de exclusão (Excluir a linha do registro)
 function botoesDeExcluir() {
     const botoesExcluir = document.getElementsByClassName('btn-excluir')
@@ -51,15 +58,20 @@ function botoesDeExcluir() {
         botaoExcluir.addEventListener('click', function (event) {
             var resposta = window.confirm("Deseja realmente excluir o usuário?"); // Retorna true caso clique em ok ou false caso clique em cancelar
             if (resposta == true) {
-                var cpfRemovido = event.target.closest("tr").querySelector('td[tipo="cpf"]').innerText
+                var idRemovido = event.target.closest("tr").getAttribute('id')
 
-                event.target.closest("tr").remove() // Remove a linha
-
-                // Remove o funcionário do array
-                funcionarios = funcionarios.filter(function (funcionario) {
-                    if (funcionario.Cpf != cpfRemovido) {
-                        return funcionario
+                // Remove o funcionário da API
+                deleteFuncionario(idRemovido)
+                .then(response => {
+                    if(response.status == 200){
+                        event.target.closest("tr").remove() // Remove a linha
                     }
+                    else{
+                        alert("Erro ao deletar o funcionário!")
+                    }
+                })
+                .catch(response => {
+                    alert("Erro ao deletar o funcionário!")
                 })
             }
         })
