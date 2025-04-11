@@ -42,6 +42,11 @@ async function getFuncionarios(){
     return await response.json()
 }
 
+function getFuncionarioById(id){
+    const response = fetch(`http://localhost:3000/funcionarios/${id}`)
+    return response
+}
+
 function deleteFuncionario(id){
     const response = fetch(`http://localhost:3000/funcionarios/${id}`, {
         "method": "DELETE"
@@ -85,30 +90,53 @@ function botoesDeVisualizar() {
 
     arrayBotoesVisualizar.forEach(function (botaoVisualizar) {
         botaoVisualizar.addEventListener('click', function (event) {
-            const funcionario = event.target.closest("tr").querySelectorAll("td");
-            const dadosFuncionario = {
-                nome: funcionario[0].textContent,
-                cpf: funcionario[1].textContent,
-                registro: funcionario[2].textContent
-            };
+            const idFuncionario = event.target.closest("tr").getAttribute('id');
+            
+            getFuncionarioById(idFuncionario)
+            .then(response => {
+                if (response.status == 200){
+                    response.json().then(funcionario => {
+                        modalBody.innerHTML = ''
+                        
+                        const pNome = document.createElement('p')
+                        pNome.innerText = `Nome: ${funcionario.Nome}`
+                        modalBody.appendChild(pNome)
 
-            // Preenche o conteúdo do modal
-            modalBody.innerHTML = `
-                <p>Nome: ${dadosFuncionario.nome}</p>
-                <p>CPF: ${dadosFuncionario.cpf}</p>
-                <p>Registro: ${dadosFuncionario.registro}</p>
-                <p>Sexo: ${funcionarios.find(f => f.Cpf == dadosFuncionario.cpf).Sexo}</p>
-                <p>Data de Nascimento: ${funcionarios.find(f => f.Cpf == dadosFuncionario.cpf).DataNascimento}</p>
-                <p>Cidade: ${funcionarios.find(f => f.Cpf == dadosFuncionario.cpf).Cidade}</p>
-                <p>Email: ${funcionarios.find(f => f.Cpf == dadosFuncionario.cpf).Email}</p>
-            `
+                        const pCpf = document.createElement('p')
+                        pCpf.innerText = `CPF: ${funcionario.Cpf}`
+                        modalBody.appendChild(pCpf)
 
-            // Abre o modal
-            modal.classList.add('show');
-            modal.style.display = 'block';
+                        const pRegistro = document.createElement('p')
+                        pRegistro.innerText = `Registro: ${funcionario.Registro}`
+                        modalBody.appendChild(pRegistro)
 
-            // Esconde o botão de atualizar funcionário
-            buttonAtualizarFuncionario.setAttribute('hidden', '')
+                        const pSexo = document.createElement('p')
+                        pSexo.innerText = `Sexo: ${funcionario.Sexo}`
+                        modalBody.appendChild(pSexo)
+
+                        const pDataNascimento = document.createElement('p')
+                        pDataNascimento.innerText = `Data Nascimento: ${funcionario.DataNascimento}`
+                        modalBody.appendChild(pDataNascimento)
+
+                        const pEmail = document.createElement('p')
+                        pEmail.innerText = `Email: ${funcionario.Email}`
+                        modalBody.appendChild(pEmail)
+
+                        // Abre o modal
+                        modal.classList.add('show');
+                        modal.style.display = 'block';
+
+                        // Esconde o botão de atualizar funcionário
+                        buttonAtualizarFuncionario.setAttribute('hidden', '')
+                    })
+                }
+                else{
+                    alert("Erro ao visualizar os dados!")
+                }
+            })
+            .catch(response => {
+                alert("Erro ao visualizar os dados!")
+            })
         })
     })
 }
