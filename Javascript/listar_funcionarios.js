@@ -1,5 +1,5 @@
 // Funcionários "chumbados"
-var funcionarios = [
+/*var funcionarios = [
     {
         "Nome": "Pedro",
         "Cpf": "000.000.000-01",
@@ -27,7 +27,7 @@ var funcionarios = [
         "Cidade": "Rio de Janeiro",
         "Email": "maria@gmail.com"
     }
-]
+]*/
 
 // Variáveis globais
 const modalBody = document.querySelector('#modal-funcionario .modal-body');
@@ -36,6 +36,11 @@ const buttonAtualizarFuncionario = document.getElementById('btn-atualizar-funcio
 const formSubmitAtualizarFuncionario = document.querySelector('#modal-funcionario .modal-footer form')
 const tbodyFuncionarios = document.querySelector('#tabela-funcionarios > tbody')
 var cpfFuncionario = ''
+
+async function getFuncionarios(){
+    const response = await fetch("http://localhost:3000/funcionarios")
+    return await response.json()
+}
 
 // Bloco responsável for fazer a lógica do botão de exclusão (Excluir a linha do registro)
 function botoesDeExcluir() {
@@ -138,35 +143,75 @@ function botoesDeEditar() {
 }
 
 // Insere todos os funcionários chumbados na tabela e cria também os botôes de Visualizar, Editar e Excluir
-function criaTabelaFuncionarios(funcionarios) {
-    funcionarios.forEach(function (funcionario) {
-        const linha = tbodyFuncionarios.insertRow();
-        linha.setAttribute('id', funcionario.Cpf)
-        linha.innerHTML = `
-        <td tipo="nome" class="text-center">${funcionario.Nome}</td>
-        <td tipo="cpf" class="text-center">${funcionario.Cpf}</td>
-        <td tipo="registro" class="text-center">${funcionario.Registro}</td>
-        <td class="text-center">
-            <button type="button" class="btn btn-sm btn-success btn-visualizar" title="Visualizar">
-                <img src="../Icons/icon-visualizar.svg" width="20" height="20">
-            </button>
+function criaTabelaFuncionarios(response) {
+    response.then(funcionarios => {
+        funcionarios.forEach(function(funcionario){
+            const linha = tbodyFuncionarios.insertRow()
+            linha.setAttribute('id', funcionario.id)
 
-            <button type="button" class="btn btn-sm btn-primary btn-editar" title="Editar">
-                <img src="../Icons/icon-editar.svg" width="20" height="20">
-            </button>
+            const tdNome = document.createElement('td')
+            tdNome.setAttribute("tipo", "nome")
+            tdNome.classList.add("text-center")
+            tdNome.textContent = funcionario.Nome
+            linha.appendChild(tdNome)
 
-            <button type="button" class="btn btn-sm btn-danger btn-excluir" title="Excluir">
-                <img src="../Icons/icon-excluir.svg" width="20" height="20">
-            </button>
-        </td>
-    `
-        tbodyFuncionarios.appendChild(linha)
+            const tdCpf = document.createElement('td')
+            tdCpf.setAttribute("tipo", "cpf")
+            tdCpf.classList.add("text-center")
+            tdCpf.textContent = funcionario.Cpf
+            linha.appendChild(tdCpf)
+
+            const tdRegistro = document.createElement('td')
+            tdRegistro.setAttribute("tipo", "registro")
+            tdRegistro.classList.add("text-center")
+            tdRegistro.textContent = funcionario.Registro
+            linha.appendChild(tdRegistro)
+
+            const tdButtons = document.createElement('td')
+            tdButtons.classList.add("text-center")
+
+            const buttonVisualizar = document.createElement('button')
+            buttonVisualizar.setAttribute("type", "button")
+            buttonVisualizar.classList.add('btn', 'btn-sm', 'btn-success', 'btn-visualizar')
+            buttonVisualizar.setAttribute("title", "Visualizar")
+            const imageVisualizar = document.createElement('img')
+            imageVisualizar.setAttribute('src', '../Icons/icon-visualizar.svg')
+            imageVisualizar.setAttribute('width', '20')
+            imageVisualizar.setAttribute('height', '20')
+            buttonVisualizar.appendChild(imageVisualizar)
+
+            const buttonEditar = document.createElement('button')
+            buttonEditar.setAttribute("type", "button")
+            buttonEditar.classList.add('btn', 'btn-sm', 'btn-primary', 'btn-editar')
+            buttonEditar.setAttribute("title", "Editar")
+            const imageEditar = document.createElement('img')
+            imageEditar.setAttribute('src', '../Icons/icon-editar.svg')
+            imageEditar.setAttribute('width', '20')
+            imageEditar.setAttribute('height', '20')
+            buttonEditar.appendChild(imageEditar)
+
+            const buttonExcluir = document.createElement('button')
+            buttonExcluir.setAttribute("type", "button")
+            buttonExcluir.classList.add('btn', 'btn-sm', 'btn-danger', 'btn-excluir')
+            buttonExcluir.setAttribute("title", "Excluir")
+            const imageExcluir = document.createElement('img')
+            imageExcluir.setAttribute('src', '../Icons/icon-excluir.svg')
+            imageExcluir.setAttribute('width', '20')
+            imageExcluir.setAttribute('height', '20')
+            buttonExcluir.appendChild(imageExcluir)
+
+            tdButtons.appendChild(buttonVisualizar)
+            tdButtons.appendChild(buttonEditar)
+            tdButtons.appendChild(buttonExcluir)
+
+            linha.appendChild(tdButtons)
+
+            tbodyFuncionarios.appendChild(linha)
+        })
+        botoesDeExcluir()
+        botoesDeEditar()
+        botoesDeVisualizar()
     })
-
-    // Cria os listeners dos botôes recém-criados
-    botoesDeExcluir()
-    botoesDeEditar()
-    botoesDeVisualizar()
 }
 
 // Bloco responsável por atualizar a tabela de Funcionarios
@@ -232,4 +277,6 @@ formSubmitAtualizarFuncionario.addEventListener('submit', function (event) {
     })
 })
 
-criaTabelaFuncionarios(funcionarios)
+const response = getFuncionarios()
+
+criaTabelaFuncionarios(response)
