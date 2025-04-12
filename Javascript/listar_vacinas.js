@@ -1,42 +1,3 @@
-var vacinas = [
-    {
-        "ID": 1,
-        "Nome": "Astrazenica",
-        "Descricao": "Vacina Astrazenica",
-        "Obrigatoria": "Não"
-    },
-    {
-        "ID": 2,
-        "Nome": "Antitétano",
-        "Descricao": " Diminui o efeito do tétano",
-        "Obrigatoria": "Sim"
-    },
-    {
-        "ID": 3,
-        "Nome": "Covid-19",
-        "Descricao": "Vacina desenvolvida no Buintantam, vai confiar?",
-        "Obrigatoria": "Sim"
-    },
-    {
-        "ID": 4,
-        "Nome": "BCG",
-        "Descricao": "Vacina para pessoas com menos de 1 ano",
-        "Obrigatoria": "Sim"
-    },
-    {
-        "ID": 5,
-        "Nome": "Vacina A",
-        "Descricao": "Vacina A",
-        "Obrigatoria": "Não"
-    },
-    {
-        "ID": 6,
-        "Nome": "Vacina B",
-        "Descricao": "Vacina B",
-        "Obrigatoria": "Não"
-    }
-]
-
 // Variáveis globais
 const modalBody = document.querySelector('#modal-vacina .modal-body');
 const modal = document.getElementById('modal-vacina');
@@ -44,6 +5,37 @@ const buttonAtualizarvacina = document.getElementById('btn-atualizar-vacina')
 const formSubmitAtualizarvacina = document.querySelector('#modal-vacina .modal-footer form')
 const tbodyvacinas = document.querySelector('#tabela-vacinas > tbody')
 var idVacina = ''
+
+function getVacinas(){
+    const response = fetch("http://localhost:3000/vacinas")
+    return response
+}
+
+function getVacinaById(id){
+    const response = fetch(`http://localhost:3000/vacinas/${id}`)
+    return response
+}
+
+function deleteVacina(id){
+    const response = fetch(`http://localhost:3000/vacinas/${id}`, {
+        "method": "DELETE"
+    })
+    return response
+}
+
+function updateVacina(id, data){
+    const response = fetch(`http://localhost:3000/vacinas/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            Nome: data.Nome, 
+            Descricao: data.Descricao, 
+            Obrigatoria: data.Obrigatoria
+        })
+    })
+
+    return response
+}
 
 // Bloco responsável for fazer a lógica do botão de exclusão (Excluir a linha do registro)
 function botoesDeExcluir() {
@@ -56,13 +48,18 @@ function botoesDeExcluir() {
             if (resposta == true) {
                 var vacinaRemovida = event.target.closest("tr").getAttribute('id')
 
-                event.target.closest("tr").remove() // Remove a linha
-
-                // Remove a vacina do array
-                vacinas = vacinas.filter(function (vacina) {
-                    if (vacina.ID != vacinaRemovida) {
-                        return vacina
+                // Remove a vacina da API
+                deleteVacina(vacinaRemovida)
+                .then(response => {
+                    if(response.status == 200){
+                        event.target.closest("tr").remove()
                     }
+                    else{
+                        alert("Erro ao deletar a vacina!")
+                    }
+                })
+                .catch(response => {
+                    alert("Erro ao deletar a vacina!")
                 })
             }
         })
@@ -78,19 +75,39 @@ function botoesDeVisualizar() {
         botaoVisualizar.addEventListener('click', function (event) {
             const vacina = event.target.closest("tr").getAttribute('id')
 
-            // Preenche o conteúdo do modal
-            modalBody.innerHTML = `
-                <p>Nome: ${vacinas.find(f => f.ID == vacina).Nome}</p>
-                <p>Descrição: ${vacinas.find(f => f.ID == vacina).Descricao}</p>
-                <p>Obrigatória: ${vacinas.find(f => f.ID == vacina).Obrigatoria}</p>
-            `
+            getVacinaById(vacina)
+            .then(response => {
+                if(response.status == 200){
+                    response.json().then(vacina => {
+                        modalBody.innerHTML = ''
 
-            // Abre o modal
-            modal.classList.add('show');
-            modal.style.display = 'block';
+                        const pNome = document.createElement('p')
+                        pNome.innerText = `Nome: ${vacina.Nome}`
+                        modalBody.appendChild(pNome)
 
-            // Esconde o botão de atualizar funcionário
-            buttonAtualizarvacina.setAttribute('hidden', '')
+                        const pDescricao = document.createElement('p')
+                        pDescricao.innerText = `Descrição: ${vacina.Descricao}`
+                        modalBody.appendChild(pDescricao)
+
+                        const pObrigatoria = document.createElement('p')
+                        pObrigatoria.innerText = `Obrigatória: ${vacina.Obrigatoria}`
+                        modalBody.appendChild(pObrigatoria)
+
+                        // Abre o modal
+                        modal.classList.add('show');
+                        modal.style.display = 'block';
+
+                        // Esconde o botão de atualizar funcionário
+                        buttonAtualizarvacina.setAttribute('hidden', '')
+                    })
+                }
+                else{
+                    alert("Erro ao visualizar os dados!")
+                }
+            })
+            .catch(response => {
+                alert("Erro ao visualizar os dados!")
+            })
         })
     })
 }
@@ -103,26 +120,69 @@ function botoesDeEditar() {
     // Bloco responsável por fazer a lógica da edição dos dados da vaci
     arrayBotoesEditar.forEach(function (botaoEditar) {
         botaoEditar.addEventListener('click', function (event) {
-            modalBody.innerHTML = `
-            <form>
-                <div class="mb-3 mx-3">
-                <label for="nome" class="form-label">Nome</label>
-                <input type="text" class="form-control" id="nome" placeholder="Digite o nome da vacina">
-                </div>
-                <div class="mb-3 mx-3">
-                <label for="descricao" class="form-label">Descrição</label>
-                <input type="text" class="form-control" id="descricao" placeholder="Digite a descrição da vacina">
-                </div>
-                <div class="mb-3 mx-3">
-                <label for="obrigatoria" class="form-label">Obrigatória</label>
-                <select class="form-select" id="obrigatoria" required>
-                    <option selected disabled value="">Escolha uma opção</option>
-                    <option>Sim</option>
-                    <option>Não</option>
-                </select> 
-                </div>
-            </form>
-        `
+            modalBody.innerHTML = ''
+
+            const form = document.createElement('form')
+
+            const divNome = document.createElement('div')
+            divNome.classList.add('mb-3', 'mx-3')
+            const labelNome = document.createElement('label')
+            labelNome.setAttribute('for', 'nome')
+            labelNome.classList.add('form-label')
+            labelNome.innerText = "Nome"
+            const inputNome = document.createElement('input')
+            inputNome.setAttribute('type', 'text')
+            inputNome.classList.add('form-control')
+            inputNome.setAttribute('id', 'nome')
+            inputNome.setAttribute('placeholder', 'Digite o nome da vacina')
+            inputNome.required = true
+            divNome.appendChild(labelNome)
+            divNome.appendChild(inputNome)
+            form.appendChild(divNome)
+
+            const divDescricao = document.createElement('div')
+            divDescricao.classList.add('mb-3', 'mx-3')
+            const labelDescricao = document.createElement('label')
+            labelDescricao.setAttribute('for', 'descricao')
+            labelDescricao.classList.add('form-label')
+            labelDescricao.innerText = "Descrição"
+            const inputDescricao = document.createElement('input')
+            inputDescricao.setAttribute('type', 'text')
+            inputDescricao.classList.add('form-control')
+            inputDescricao.setAttribute('id', 'descricao')
+            inputDescricao.setAttribute('placeholder', 'Digite a descrição da vacina')
+            inputDescricao.required = true
+            divDescricao.appendChild(labelDescricao)
+            divDescricao.appendChild(inputDescricao)
+            form.appendChild(divDescricao)
+
+            const divObrigatoria = document.createElement('div')
+            divObrigatoria.classList.add('mb-3', 'mx-3')
+            const labelObrigatoria = document.createElement('label')
+            labelObrigatoria.setAttribute('for', 'obrigatoria')
+            labelObrigatoria.classList.add('form-label')
+            labelObrigatoria.innerText = "Obrigatória"
+            const selectObrigatoria = document.createElement('select')
+            selectObrigatoria.classList.add('form-select')
+            selectObrigatoria.setAttribute('id', 'obrigatoria')
+            selectObrigatoria.required = true
+            const optionDefault = document.createElement('option')
+            optionDefault.selected = true
+            optionDefault.disabled = true
+            optionDefault.innerText = "Escolha uma opção"
+            selectObrigatoria.appendChild(optionDefault)
+            const optionSim = document.createElement('option')
+            optionSim.innerText = 'Sim'
+            selectObrigatoria.appendChild(optionSim)
+            const optionNao = document.createElement('option')
+            optionNao.innerText = 'Não'
+            selectObrigatoria.appendChild(optionNao)
+            divObrigatoria.appendChild(labelObrigatoria)
+            divObrigatoria.appendChild(selectObrigatoria)
+            form.appendChild(divObrigatoria)
+
+            modalBody.appendChild(form)
+
             // Pega o id da vacina que vai ser editado antes de abrir o modal
             idVacina = event.target.closest("tr").getAttribute('id')
 
@@ -137,47 +197,81 @@ function botoesDeEditar() {
 }
 
 // Insere todos as vacinas chumbados na tabela e cria também os botôes de Visualizar, Editar e Excluir
-function criaTabelaVacinas(vacinas) {
-    vacinas.forEach(function (vacina) {
-        const linha = tbodyvacinas.insertRow();
-        linha.setAttribute('id', vacina.ID)
-        linha.innerHTML = `
-        <td tipo="nome" class="text-center">${vacina.Nome}</td>
-        <td tipo="descricao" class="text-center">${vacina.Descricao}</td>
-        <td tipo="obrigatoria" class="text-center">${vacina.Obrigatoria}</td>
-        <td class="text-center">
-            <button type="button" class="btn btn-sm btn-success btn-visualizar" title="Visualizar">
-                <img src="../Icons/icon-visualizar.svg" width="20" height="20">
-            </button>
+function criaTabelaVacinas(ids = null) {
+    getVacinas().then(response => response.json()).then(vacinas => {
+        tbodyvacinas.innerHTML = ''
+        vacinas.forEach(function(vacina){
+            if(ids != null && !ids.includes(vacina.id)){
+                return
+            }
+            const linha = tbodyvacinas.insertRow()
+            linha.setAttribute('id', vacina.id)
 
-            <button type="button" class="btn btn-sm btn-primary btn-editar" title="Editar">
-                <img src="../Icons/icon-editar.svg" width="20" height="20">
-            </button>
+            const tdNome = document.createElement('td')
+            tdNome.setAttribute("tipo", "nome")
+            tdNome.classList.add("text-center")
+            tdNome.textContent = vacina.Nome
+            linha.appendChild(tdNome)
 
-            <button type="button" class="btn btn-sm btn-danger btn-excluir" title="Excluir">
-                <img src="../Icons/icon-excluir.svg" width="20" height="20">
-            </button>
-        </td>
-    `
-        tbodyvacinas.appendChild(linha)
+            const tdDescricao = document.createElement('td')
+            tdDescricao.setAttribute("tipo", "descricao")
+            tdDescricao.classList.add("text-center")
+            tdDescricao.textContent = vacina.Descricao
+            linha.appendChild(tdDescricao)
+
+            const tdObrigatoria = document.createElement('td')
+            tdObrigatoria.setAttribute("tipo", "obrigatoria")
+            tdObrigatoria.classList.add("text-center")
+            tdObrigatoria.textContent = vacina.Obrigatoria
+            linha.appendChild(tdObrigatoria)
+
+            const tdButtons = document.createElement('td')
+            tdButtons.classList.add("text-center")
+
+            const buttonVisualizar = document.createElement('button')
+            buttonVisualizar.setAttribute("type", "button")
+            buttonVisualizar.classList.add('btn', 'btn-sm', 'btn-success', 'btn-visualizar')
+            buttonVisualizar.setAttribute("title", "Visualizar")
+            const imageVisualizar = document.createElement('img')
+            imageVisualizar.setAttribute('src', '../Icons/icon-visualizar.svg')
+            imageVisualizar.setAttribute('width', '20')
+            imageVisualizar.setAttribute('height', '20')
+            buttonVisualizar.appendChild(imageVisualizar)
+
+            const buttonEditar = document.createElement('button')
+            buttonEditar.setAttribute("type", "button")
+            buttonEditar.classList.add('btn', 'btn-sm', 'btn-primary', 'btn-editar')
+            buttonEditar.setAttribute("title", "Editar")
+            const imageEditar = document.createElement('img')
+            imageEditar.setAttribute('src', '../Icons/icon-editar.svg')
+            imageEditar.setAttribute('width', '20')
+            imageEditar.setAttribute('height', '20')
+            buttonEditar.appendChild(imageEditar)
+
+            const buttonExcluir = document.createElement('button')
+            buttonExcluir.setAttribute("type", "button")
+            buttonExcluir.classList.add('btn', 'btn-sm', 'btn-danger', 'btn-excluir')
+            buttonExcluir.setAttribute("title", "Excluir")
+            const imageExcluir = document.createElement('img')
+            imageExcluir.setAttribute('src', '../Icons/icon-excluir.svg')
+            imageExcluir.setAttribute('width', '20')
+            imageExcluir.setAttribute('height', '20')
+            buttonExcluir.appendChild(imageExcluir)
+
+            tdButtons.appendChild(buttonVisualizar)
+            tdButtons.appendChild(buttonEditar)
+            tdButtons.appendChild(buttonExcluir)
+
+            linha.appendChild(tdButtons)
+
+            tbodyvacinas.appendChild(linha)
+        })
+    
+        // Cria os listeners dos botôes recém-criados
+        botoesDeExcluir()
+        botoesDeEditar()
+        botoesDeVisualizar()
     })
-
-    // Cria os listeners dos botôes recém-criados
-    botoesDeExcluir()
-    botoesDeEditar()
-    botoesDeVisualizar()
-}
-
-// Bloco responsável por atualizar a tabela de vacinas
-function atualizaTabelaVacinas(vacina) {
-    const linha = document.getElementById(vacina.ID)
-    const nome = linha.querySelector('td[tipo="nome"]')
-    const descricao = linha.querySelector('td[tipo="descricao"]')
-    const obrigatoria = linha.querySelector('td[tipo="obrigatoria"]')
-
-    nome.innerText = vacina.Nome
-    descricao.innerText = vacina.Descricao
-    obrigatoria.innerText = vacina.Obrigatoria
 }
 
 // Bloco responsável por implementar a lógica da barra e botão de pesquisa
@@ -186,19 +280,26 @@ const inputFiltrarNome = document.getElementById('input-filtrar-nome')
 inputFiltrarNome.addEventListener('change', function (event) {
     const texto = inputFiltrarNome.value.toLowerCase().trimStart().trimEnd()
 
-    if (texto != '') {
-        const vacinasFiltradas = vacinas.filter(function (vacina) {
-            if (vacina.Nome.toLowerCase().includes(texto)) {
-                return vacina
-            }
-        })
-        tbodyvacinas.innerHTML = ''
-        criaTabelaVacinas(vacinasFiltradas)
-    }
-    else {
-        tbodyvacinas.innerHTML = ''
-        criaTabelaVacinas(vacinas)
-    }
+    getVacinas().then(response => response.json()).then(vacinas => {
+        if (texto != '') {
+            const vacinasFiltradas = vacinas.filter(function (vacina) {
+                if (vacina.Nome.toLowerCase().includes(texto)) {
+                    return vacina
+                }
+            })
+            const idsVacinasFiltradas = vacinasFiltradas.map(function(vacina){
+                return vacina.id
+            })
+
+            console.log(idsVacinasFiltradas)
+            tbodyvacinas.innerHTML = ''
+            criaTabelaVacinas(idsVacinasFiltradas)
+        }
+        else {
+            tbodyvacinas.innerHTML = ''
+            criaTabelaVacinas()
+        }
+    })
 })
 
 // Bloco responsável por fechar o modal de visualização
@@ -219,16 +320,17 @@ formSubmitAtualizarvacina.addEventListener('submit', function (event) {
     const descricao = document.getElementById('descricao')
     const obrigatoria = document.getElementById('obrigatoria')
    
-    vacinas = vacinas.map(function (vacina) {
-        if (vacina['ID'] == idVacina) {
-            vacina['Nome'] = nome.value
-            vacina['Descricao'] = descricao.value
-            vacina['Obrigatoria'] = obrigatoria.value
+    data = {
+        "Nome": nome.value,
+        "Descricao": descricao.value,
+        "Obrigatoria": obrigatoria.value
+    }
 
-            atualizaTabelaVacinas(vacina)
+    updateVacina(idVacina, data).then(
+        vacina => {
+            criaTabelaVacinas()
         }
-        return vacina
-    })
+    )
 })
 
-criaTabelaVacinas(vacinas)
+criaTabelaVacinas()

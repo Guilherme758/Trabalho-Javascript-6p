@@ -1,33 +1,4 @@
 // Funcionários "chumbados"
-/*var funcionarios = [
-    {
-        "Nome": "Pedro",
-        "Cpf": "000.000.000-01",
-        "Registro": "123",
-        "Sexo": "Masculino",
-        "DataNascimento": "14/01/2000",
-        "Cidade": "São Paulo",
-        "Email": "pedro@gmail.com"
-    },
-    {
-        "Nome": "Ana",
-        "Cpf": "000.000.000-02",
-        "Registro": "456",
-        "Sexo": "Feminino",
-        "DataNascimento": "27/02/2003",
-        "Cidade": "Pouso Alegre",
-        "Email": "Ana@gmail.com"
-    },
-    {
-        "Nome": "Maria",
-        "Cpf": "000.000.000-03",
-        "Registro": "789",
-        "Sexo": "Feminino",
-        "DataNascimento": "09/12/1995",
-        "Cidade": "Rio de Janeiro",
-        "Email": "maria@gmail.com"
-    }
-]*/
 
 // Variáveis globais
 const modalBody = document.querySelector('#modal-funcionario .modal-body');
@@ -388,7 +359,5 @@ formSubmitAtualizarFuncionario.addEventListener('submit', function (event) {
         }
     )     
 })
-
-const response = getFuncionarios()
 
 criaTabelaFuncionarios()
