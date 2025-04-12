@@ -55,10 +55,15 @@ function deleteFuncionario(id){
 }
 
 function updateFuncionario(id, data){
-    const response = fetch(`http://localhost:3000/${id}`, {
-        method: "PUT",
+    const response = fetch(`http://localhost:3000/funcionarios/${id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome: data.Nome, registro: data.Registro, cidade: data.Cidade, email: data.email})
+        body: JSON.stringify({ 
+            Nome: data.Nome, 
+            Registro: data.Registro, 
+            Cidade: data.Cidade, 
+            Email: data.Email
+        })
     })
 
     return response
@@ -220,7 +225,7 @@ function botoesDeEditar() {
             const labelEmail = document.createElement('label')
             labelEmail.setAttribute('for', 'email')
             labelEmail.classList.add('form-label')
-            labelEmail.innerText = "Cidade"
+            labelEmail.innerText = "Email"
             const inputEmail = document.createElement('input')
             inputEmail.setAttribute('type', 'text')
             inputEmail.classList.add('form-control')
@@ -247,9 +252,14 @@ function botoesDeEditar() {
 }
 
 // Insere todos os funcionários chumbados na tabela e cria também os botôes de Visualizar, Editar e Excluir
-function criaTabelaFuncionarios(response) {
-    response.then(funcionarios => {
+function criaTabelaFuncionarios(ids = null) {
+    getFuncionarios().then(funcionarios => {
+        tbodyFuncionarios.innerHTML = ''
         funcionarios.forEach(function(funcionario){
+            if(ids != null && !ids.includes(funcionario.id)){
+                return
+            }
+
             const linha = tbodyFuncionarios.insertRow()
             linha.setAttribute('id', funcionario.id)
 
@@ -318,35 +328,32 @@ function criaTabelaFuncionarios(response) {
     })
 }
 
-// Bloco responsável por atualizar a tabela de Funcionarios
-function atualizaTabelaFuncionarios(funcionario) {
-    const linha = document.getElementById(funcionario.Cpf)
-    const nome = linha.querySelector('td[tipo="nome"]')
-    const registro = linha.querySelector('td[tipo="registro"]')
-
-    nome.innerText = funcionario.Nome
-    registro.innerText = funcionario.Registro
-}
-
 // Bloco responsável por implementar a lógica da barra de pesquisa
 // const botaoFiltrarNome = document.getElementById('btn-filtrar-nome')
 const inputFiltrarNome = document.getElementById('input-filtrar-nome')
 inputFiltrarNome.addEventListener('change', function (event) {
     const texto = inputFiltrarNome.value.toLowerCase().trimStart().trimEnd()
 
-    if (texto != '') {
-        const funcionariosFiltrados = funcionarios.filter(function (funcionario) {
-            if (funcionario.Nome.toLowerCase().includes(texto)) {
-                return funcionario
-            }
-        })
-        tbodyFuncionarios.innerHTML = ''
-        criaTabelaFuncionarios(funcionariosFiltrados)
-    }
-    else {
-        tbodyFuncionarios.innerHTML = ''
-        criaTabelaFuncionarios(funcionarios)
-    }
+    getFuncionarios().then(funcionarios => {
+        if (texto != '') {
+            const funcionariosFiltrados = funcionarios.filter(function (funcionario) {
+                if (funcionario.Nome.toLowerCase().includes(texto)) {
+                    return funcionario.id
+                }
+            })
+            const idsFuncionariosFiltrados = funcionariosFiltrados.map(function(funcionario){
+                return funcionario.id
+            })
+
+            console.log(idsFuncionariosFiltrados)
+            tbodyFuncionarios.innerHTML = ''
+            criaTabelaFuncionarios(idsFuncionariosFiltrados)
+        }
+        else {
+            tbodyFuncionarios.innerHTML = ''
+            criaTabelaFuncionarios()
+        }
+    })
 })
 
 // Bloco responsável por fechar o modal de visualização
@@ -368,19 +375,20 @@ formSubmitAtualizarFuncionario.addEventListener('submit', function (event) {
     const cidade = document.getElementById('cidade')
     const email = document.getElementById('email')
 
-    funcionarios = funcionarios.map(function (funcionario) {
-        if (funcionario['Cpf'] == idFuncionario) {
-            funcionario['Nome'] = nome.value
-            funcionario['Registro'] = registro.value
-            funcionario['Cidade'] = cidade.value
-            funcionario['Email'] = email.value
+    data = {
+        "Nome": nome.value,
+        "Registro": registro.value,
+        "Cidade": cidade.value,
+        "Email": email.value
+    }
 
-            atualizaTabelaFuncionarios(funcionario)
+    updateFuncionario(idFuncionario, data).then(
+        funcionario => {
+            criaTabelaFuncionarios()
         }
-        return funcionario
-    })
+    )     
 })
 
 const response = getFuncionarios()
 
-criaTabelaFuncionarios(response)
+criaTabelaFuncionarios()
