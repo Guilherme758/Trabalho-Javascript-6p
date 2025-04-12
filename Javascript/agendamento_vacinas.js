@@ -1,3 +1,11 @@
+function getFuncionarios(){
+    return fetch("http://localhost:3000/funcionarios")
+}
+
+function getVacinas(){
+    return fetch("http://localhost:3000/vacinas")
+}
+
 const form = document.getElementById('form-aplicacao-vacinas');
 
 const paciente = document.getElementById('nome-paciente');
@@ -96,27 +104,62 @@ function validaInputs(campos) {
     }
 }
 
+getVacinas().then(response => response.json()).then(vacinas => {
+    vacinas.forEach(function(vacina){
+        const option = document.createElement('option')
+        option.value = vacina.id
+        option.innerText = vacina.Nome
+        tipoVacina.appendChild(option)
+    })
+})
+
+getFuncionarios().then(response => response.json()).then(funcionarios => {
+    funcionarios.forEach(function(funcionario){
+        const option = document.createElement('option')
+        option.value = funcionario.id
+        option.innerText = `${funcionario.Nome} - ${funcionario.Cpf}`
+        paciente.appendChild(option)
+    })
+})
+
+paciente.addEventListener('change', function(event){
+    const funcionarios = paciente.getElementsByTagName('option')
+    const idFuncionario = paciente.selectedOptions[0].value
+
+    const funcionariosFiltrados = Array.from(funcionarios).filter(function(funcionario){
+        return funcionario.value != idFuncionario
+    })
+
+    aplicador.innerHTML = ''
+
+    funcionariosFiltrados.forEach(function(funcionario){
+        aplicador.appendChild(funcionario.cloneNode(true))
+    })
+
+    aplicador.removeAttribute('disabled')
+})
+
 form.addEventListener("submit", function (event) {
     event.preventDefault();
     if (validaInputs(campos)) {
-        const dataSelecionada = new Date(`${data.value} 03:00:00`)
-        const tabelaVacinadosBody = document.querySelector('#tabela-dos-vacinados tbody');
+        fetch("http://localhost:3000/vacinas_agendadas", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                Paciente: paciente.selectedOptions[0].value,
+                Aplicador: aplicador.selectedOptions[0].value,
+                Data: data.value,
+                TipoVacina: tipoVacina.selectedOptions[0].value
+            })
+        })
+        .then(
+            alert("Dados Salvos!"),
 
-        const linha = tabelaVacinadosBody.insertRow();
-        linha.innerHTML = `
-        <td class="text-center">${paciente.value}</td>
-        <td class="text-center">${aplicador.value}</td>
-        <td class="text-center">${dataSelecionada.toLocaleDateString()}</td>
-        <td class="text-center">${tipoVacina.value}</td>
-        `
-        tabelaVacinadosBody.appendChild(linha);
-
-        alert("Dados Salvos!");
-
-        paciente.value = '';
-        aplicador.value = '';
-        data.value = '';
-        tipoVacina.value = '';
+            paciente.value = '',
+            aplicador.value = '',
+            data.value = '',
+            tipoVacina.value = ''
+        )
     }
     else{
         alert("Erro ao enviar o formulário. Valide os campos inseridos")

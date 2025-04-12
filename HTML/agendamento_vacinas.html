@@ -111,13 +111,17 @@
     <form id="form-aplicacao-vacinas" class="container mt-3">
         <div class="mb-3 mx-3">
             <label for="nome-paciente" class="form-label">Funcionario Vacinado</label>
-            <input type="text" class="form-control" id="nome-paciente" placeholder="Digite o nome do paciente">
+            <select class="form-select" id="nome-paciente">
+                <option selected disabled value="">Selecione um Funcionario</option>
+            </select>
             <span id = "span-nome-paciente"></span>
         </div>
         
         <div class="mb-3 mx-3">
             <label for="nome-aplicador" class="form-label">Funcionario Aplicador</label>
-            <input type="text" class="form-control" id="nome-aplicador" placeholder="Digite o nome do aplicador" >
+            <select disabled class="form-select" id="nome-aplicador">
+                <option selected disabled value="">Selecione um Funcionario</option>
+            </select>
             <span id = "span-nome-aplicador"></span>
         </div>
 
@@ -131,12 +135,6 @@
             <label for="tipo-vacina" class="form-label">Tipo da Vacina</label>
             <select class="form-select" id="tipo-vacina" >
                 <option selected disabled value="">Selecione uma opção</option>
-                <option>Astrazenica</option>
-                <option>Antitétano</option>
-                <option>Covid-19</option>
-                <option>BCG</option>
-                <option>Vacina A</option>
-                <option>Vacina B</option>
             </select> 
             <span id = "span-tipo-vacina"></span> 
         </div>
@@ -145,19 +143,6 @@
             <button class="btn btn-primary" id="btn-cadastro-da-vacinacao" type="submit">Salvar Cadastro de Vacinação</button>
         </div>
     </form>
-    
-    <table id="tabela-dos-vacinados" class="table container table-bordered border-dark mt-5">
-        <thead>
-            <tr>
-                <th scope="col" class="text-center">Funcionario Vacinado</th>
-                <th scope="col" class="text-center">Aplicador</th> 
-                <th scope="col" class="text-center">Data do Agendamento</th> 
-                <th scope="col" class="text-center">Tipo da Vacina</th> 
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
     <script src="../Javascript/agendamento_vacinas.js"></script>
 </body>
 </html>
