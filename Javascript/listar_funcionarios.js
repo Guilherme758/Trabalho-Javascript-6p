@@ -35,7 +35,7 @@ const modal = document.getElementById('modal-funcionario');
 const buttonAtualizarFuncionario = document.getElementById('btn-atualizar-funcionario')
 const formSubmitAtualizarFuncionario = document.querySelector('#modal-funcionario .modal-footer form')
 const tbodyFuncionarios = document.querySelector('#tabela-funcionarios > tbody')
-var cpfFuncionario = ''
+var idFuncionario = ''
 
 async function getFuncionarios(){
     const response = await fetch("http://localhost:3000/funcionarios")
@@ -51,6 +51,16 @@ function deleteFuncionario(id){
     const response = fetch(`http://localhost:3000/funcionarios/${id}`, {
         "method": "DELETE"
     })
+    return response
+}
+
+function updateFuncionario(id, data){
+    const response = fetch(`http://localhost:3000/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome: data.Nome, registro: data.Registro, cidade: data.Cidade, email: data.email})
+    })
+
     return response
 }
 
@@ -118,6 +128,10 @@ function botoesDeVisualizar() {
                         pDataNascimento.innerText = `Data Nascimento: ${funcionario.DataNascimento}`
                         modalBody.appendChild(pDataNascimento)
 
+                        const pCidade = document.createElement('p')
+                        pCidade.innerText = `Cidade: ${funcionario.Cidade}`
+                        modalBody.appendChild(pCidade)
+
                         const pEmail = document.createElement('p')
                         pEmail.innerText = `Email: ${funcionario.Email}`
                         modalBody.appendChild(pEmail)
@@ -149,28 +163,78 @@ function botoesDeEditar() {
     // Bloco responsável por fazer a lógica da edição dos dados do funcionário
     arrayBotoesEditar.forEach(function (botaoEditar) {
         botaoEditar.addEventListener('click', function (event) {
-            modalBody.innerHTML = `
-            <form>
-                <div class="mb-3 mx-3">
-                <label for="nome" class="form-label">Nome</label>
-                <input type="text" class="form-control" id="nome" placeholder="Digite Seu nome" required>
-                </div>
-                <div class="mb-3 mx-3">
-                <label for="registro" class="form-label">Registro</label>
-                <input type="text" class="form-control" id="registro" placeholder="Descrição" required>
-                </div>
-                <div class="mb-3 mx-3">
-                <label for="cidade" class="form-label">Cidade</label>
-                <input type="text" class="form-control" id="cidade" placeholder="Ex: São Paulo - SP" required>
-                </div>
-                <div class="mb-3 mx-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control" id="email" placeholder="Exemple@email.com" required>
-                </div>
-            </form>
-        `
-            // Pega o cpf do funcionário que vai ser editado antes de abrir o modal
-            cpfFuncionario = event.target.closest("tr").querySelectorAll("td")[1].innerText
+            modalBody.innerHTML = ''
+
+            const form = document.createElement('form')
+
+            const divNome = document.createElement('div')
+            divNome.classList.add('mb-3', 'mx-3')
+            const labelNome = document.createElement('label')
+            labelNome.setAttribute('for', 'nome')
+            labelNome.classList.add('form-label')
+            labelNome.innerText = "Nome"
+            const inputNome = document.createElement('input')
+            inputNome.setAttribute('type', 'text')
+            inputNome.classList.add('form-control')
+            inputNome.setAttribute('id', 'nome')
+            inputNome.setAttribute('placeholder', 'Digite Seu nome')
+            inputNome.required = true
+            divNome.appendChild(labelNome)
+            divNome.appendChild(inputNome)
+            form.appendChild(divNome)
+
+            const divRegistro = document.createElement('div')
+            divRegistro.classList.add('mb-3', 'mx-3')
+            const labelRegistro = document.createElement('label')
+            labelRegistro.setAttribute('for', 'registro')
+            labelRegistro.classList.add('form-label')
+            labelRegistro.innerText = "Registro"
+            const inputRegistro = document.createElement('input')
+            inputRegistro.setAttribute('type', 'text')
+            inputRegistro.classList.add('form-control')
+            inputRegistro.setAttribute('id', 'registro')
+            inputRegistro.setAttribute('placeholder', 'Descrição')
+            inputRegistro.required = true
+            divRegistro.appendChild(labelRegistro)
+            divRegistro.appendChild(inputRegistro)
+            form.appendChild(divRegistro)
+
+            const divCidade = document.createElement('div')
+            divCidade.classList.add('mb-3', 'mx-3')
+            const labelCidade = document.createElement('label')
+            labelCidade.setAttribute('for', 'cidade')
+            labelCidade.classList.add('form-label')
+            labelCidade.innerText = "Cidade"
+            const inputCidade = document.createElement('input')
+            inputCidade.setAttribute('type', 'text')
+            inputCidade.classList.add('form-control')
+            inputCidade.setAttribute('id', 'cidade')
+            inputCidade.setAttribute('placeholder', 'Ex: São Paulo - SP')
+            inputCidade.required = true
+            divRegistro.appendChild(labelCidade)
+            divRegistro.appendChild(inputCidade)
+            form.appendChild(divCidade)
+            
+            const divEmail = document.createElement('div')
+            divEmail.classList.add('mb-3', 'mx-3')
+            const labelEmail = document.createElement('label')
+            labelEmail.setAttribute('for', 'email')
+            labelEmail.classList.add('form-label')
+            labelEmail.innerText = "Cidade"
+            const inputEmail = document.createElement('input')
+            inputEmail.setAttribute('type', 'text')
+            inputEmail.classList.add('form-control')
+            inputEmail.setAttribute('id', 'email')
+            inputEmail.setAttribute('placeholder', 'Exemple@email.com')
+            inputEmail.required = true
+            divEmail.appendChild(labelEmail)
+            divEmail.appendChild(inputEmail)
+            form.appendChild(divEmail)
+
+            modalBody.appendChild(form)
+
+            // Pega o id do funcionário que vai ser editado antes de abrir o modal
+            idFuncionario = event.target.closest("tr").getAttribute('id')
 
             // Mostra o modal
             modal.classList.add('show');
@@ -305,7 +369,7 @@ formSubmitAtualizarFuncionario.addEventListener('submit', function (event) {
     const email = document.getElementById('email')
 
     funcionarios = funcionarios.map(function (funcionario) {
-        if (funcionario['Cpf'] == cpfFuncionario) {
+        if (funcionario['Cpf'] == idFuncionario) {
             funcionario['Nome'] = nome.value
             funcionario['Registro'] = registro.value
             funcionario['Cidade'] = cidade.value
