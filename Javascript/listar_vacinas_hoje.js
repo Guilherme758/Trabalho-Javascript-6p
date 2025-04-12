@@ -1,49 +1,70 @@
-var vacinas = [
-    {
-        "FuncionarioVacinado": "Pedro",
-        "FuncionarioResponsavel": "Ana",
-        "DataAplicacao": "2025-03-20 03:00:00",
-        "TipoVacina": "Vacina A"
-    },
-    {
-        "FuncionarioVacinado": "Maria",
-        "FuncionarioResponsavel": "Pedro",
-        "DataAplicacao": "2025-03-20 03:00:00",
-        "TipoVacina": "Vacina B"
-    },
-    {
-        "FuncionarioVacinado": "Ana",
-        "FuncionarioResponsavel": "Maria",
-        "DataAplicacao": "2025-03-21 03:00:00",
-        "TipoVacina": "BCG"
-    },
-    {
-        "FuncionarioVacinado": "Ana",
-        "FuncionarioResponsavel": "Maria",
-        "DataAplicacao": "2025-03-19 03:00:00",
-        "TipoVacina": "Covid-19"
-    }
-]
+function getVacinasAgendadasHoje(){
+    const hoje = new Date().toJSON().slice(0, 10)
+    return fetch(`http://localhost:3000/vacinas_agendadas?Data=${hoje}`)
+}
+
+function getFuncionarioById(id){
+    return fetch(`http://localhost:3000/funcionarios/${id}`)
+}
+
+function getVacinaById(id){
+    return fetch(`http://localhost:3000/vacinas/${id}`)
+}
 
 // Variáveis globais
 const tbodyvacinas = document.querySelector('#tabela-vacinas > tbody')
-const hoje = new Date().toLocaleDateString()
 
 // Insere todos as vacinas chumbadas de hoje na tabela
-function criaTabelaVacinas(vacinas) {
-    vacinas.forEach(function (vacina) {
-        let dataAplicacao = new Date(vacina.DataAplicacao).toLocaleDateString()
-        if(dataAplicacao == hoje){
-            const linha = tbodyvacinas.insertRow();
-            linha.innerHTML = `
-            <td tipo="funcionario-vacinado" class="text-center">${vacina.FuncionarioVacinado}</td>
-            <td tipo="funcionario-responsavel" class="text-center">${vacina.FuncionarioResponsavel}</td>
-            <td tipo="data-aplicacao" class="text-center">${dataAplicacao}</td>
-            <td tipo="tipo-vacina" class="text-center">${vacina.TipoVacina}</td>
-            `
-            tbodyvacinas.appendChild(linha)
-        }
+function criaTabelaVacinas() {
+    getVacinasAgendadasHoje().then(response => response.json()).then(vacinas_agendadas => {
+        vacinas_agendadas.forEach(function(vacina){
+            let paciente;
+            let aplicador;
+            let vacinaAplicada;
+
+            getFuncionarioById(vacina.Paciente)
+            .then(response => response.json()).then(Paciente => {
+                paciente = `${Paciente.Nome} - ${Paciente.Cpf}`
+                console.log(paciente)
+                
+                getFuncionarioById(vacina.Aplicador)
+                .then(response => response.json()).then(Aplicador => {
+                    aplicador = `${Aplicador.Nome} - ${Aplicador.Cpf}`
+                    console.log(aplicador)
+
+                    getVacinaById(vacina.TipoVacina)
+                    .then(response => response.json()).then(tipoVacina => {
+                        vacinaAplicada = `${tipoVacina.Nome}`
+                        console.log(vacinaAplicada)
+
+                        const linha = tbodyvacinas.insertRow();
+
+                        const tdPaciente = document.createElement('td')
+                        tdPaciente.classList.add('text-center')
+                        tdPaciente.innerText = paciente
+                        linha.appendChild(tdPaciente)
+
+                        const tdAplicador = document.createElement('td')
+                        tdAplicador.classList.add('text-center')
+                        tdAplicador.innerText = aplicador
+                        linha.appendChild(tdAplicador)
+
+                        const tdData = document.createElement('td')
+                        tdData.classList.add('text-center')
+                        tdData.innerText = vacina.Data
+                        linha.appendChild(tdData)
+
+                        const tdTipoVacina = document.createElement('td')
+                        tdTipoVacina.classList.add('text-center')
+                        tdTipoVacina.innerText = vacinaAplicada
+                        linha.appendChild(tdTipoVacina)
+
+                        tbodyvacinas.appendChild(linha)
+                    })
+                })
+            })
+        })
     })
 }
 
-criaTabelaVacinas(vacinas)
+criaTabelaVacinas()
