@@ -1,117 +1,157 @@
-const form = document.getElementById('form-aplicacao-vacinas')
+// URLs centralizadas
+const API_URL = 'http://localhost:3000';
+const URL_FUNCIONARIOS = `${API_URL}/funcionarios`;
+const URL_VACINAS = `${API_URL}/vacinas`;
+const URL_VACINACOES = `${API_URL}/vacinacoes`;
 
+// Elementos do DOM
+const form = document.getElementById('form-aplicacao-vacinas');
+const paciente = document.getElementById('nome-paciente');
+const aplicador = document.getElementById('nome-aplicador');
+const data = document.getElementById('data-vacinacao');
+const tipoVacina = document.getElementById('tipo-vacina');
+
+// Campos para validação
 const campos = [
-    {
-        "Nome": "nome-paciente",
-        "Tipo": "texto"
-    },
+    { "Nome": "nome-paciente", "Tipo": "texto" },
+    { "Nome": "nome-aplicador", "Tipo": "texto" },
+    { "Nome": "data-vacinacao", "Tipo": "data" },
+    { "Nome": "tipo-vacina", "Tipo": "texto" }
+];
 
-    {    
-        "Nome": "nome-aplicador",
-        "Tipo": "texto"
-    },
-
-    {
-        "Nome": "data-vacinacao",
-        "Tipo": "data"
-    },
-
-    {
-        "Nome": "tipo-vacina",
-        "Tipo": "texto"
+// Função para carregar dados iniciais
+async function carregarDadosIniciais() {
+    try {
+        const [funcionarios, vacinas] = await Promise.all([
+            fetch(URL_FUNCIONARIOS).then(res => {
+                if (!res.ok) throw new Error('Erro ao carregar funcionários');
+                return res.json();
+            }),
+            fetch(URL_VACINAS).then(res => {
+                if (!res.ok) throw new Error('Erro ao carregar vacinas');
+                return res.json();
+            })
+        ]);
+        
+        preencherSelects(funcionarios, vacinas);
+    } catch (error) {
+        console.error('Erro:', error);
+        alert(error.message);
     }
-]
+}
 
+// Preencher selects
+function preencherSelects(funcionarios, vacinas) {
+    // Limpar e preencher vacinas
+    tipoVacina.innerHTML = '<option selected disabled value="">Selecione uma vacina</option>';
+    vacinas.forEach(vacina => {
+        const option = document.createElement('option');
+        option.value = vacina.id;
+        option.textContent = vacina.Nome;
+        tipoVacina.appendChild(option);
+    });
 
-//Formulario
-const paciente = document.getElementById('nome-paciente')
-const aplicador = document.getElementById('nome-aplicador')
-const data = document.getElementById('data-vacinacao')
-const tipoVacina = document.getElementById('tipo-vacina')
+    // Limpar e preencher pacientes
+    paciente.innerHTML = '<option selected disabled value="">Selecione um paciente</option>';
+    funcionarios.forEach(funcionario => {
+        const option = document.createElement('option');
+        option.value = funcionario.id;
+        option.textContent = `${funcionario.Nome} (${funcionario.Cpf})`;
+        paciente.appendChild(option);
+    });
 
-function validarinputs(campos){
-    let contErros = 0
+    // Configurar aplicador
+    aplicador.innerHTML = '<option selected disabled value="">Selecione o aplicador</option>';
+    aplicador.disabled = true;
+}
 
-    campos.forEach(function(campo){
-        let input = document.getElementById(campo.Nome)
-        let span = document.getElementById(`span-${campo.Nome}`)
-
-        if(campo.Tipo == "texto"){
-            if(input.value.trimStart().trimEnd() == ""){
-                span.innerText = `${campo.Nome} não pode ser vazio`
-                span.style.color = 'red'
-                contErros += 1
+// Atualizar aplicadores disponíveis
+paciente.addEventListener('change', function() {
+    const idSelecionado = this.value;
+    aplicador.innerHTML = '<option selected disabled value="">Selecione o aplicador</option>';
+    
+    if (idSelecionado) {
+        const options = paciente.querySelectorAll('option');
+        options.forEach(option => {
+            if (option.value && option.value !== idSelecionado) {
+                aplicador.appendChild(option.cloneNode(true));
             }
-            else {
-                span.innerText = ''
-            }
-        }
+        });
+        aplicador.disabled = false;
+    } else {
+        aplicador.disabled = true;
+    }
+});
 
-        else if(campo.Tipo == "cpf"){
-            let cpfRegex = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/
+// Validação
+function validaInputs(campos) {
+    let valido = true;
 
-            if(!cpfRegex.teste(input.value)){
-                span.innerText = `${campo.Nome} não esta no padrao 000.000.000-00`
-                span.style.color = 'red'
-                contErros += 1
-            }
-            else {
-                span.innerText = ''
-            }
-        }
+    campos.forEach(campo => {
+        const input = document.getElementById(campo.Nome);
+        const span = document.getElementById(`span-${campo.Nome}`);
 
-        else if(campo.Tipo == "data"){
-            let data = new Date(input.value)
-
-            if(isNaN(data.getTime())){
-                span.innerText = `${campo.Nome} não está no padrão correto ou não é uma data válida`
-                span.style.color = 'red'
-                contErros += 1
-            }
-            else {
+        if (campo.Tipo === "texto" && (!input.value || input.value.trim() === "")) {
+            span.textContent = "Campo obrigatório";
+            span.style.color = 'red';
+            valido = false;
+        } else if (campo.Tipo === "data") {
+            const dataVal = new Date(input.value);
+            if (isNaN(dataVal.getTime())) {
+                span.textContent = "Data inválida";
+                span.style.color = 'red';
+                valido = false;
+            } else {
                 const dataAtual = new Date();
                 const dataSelecionada = new Date(`${input.value} 03:00:00`)
                 if(dataSelecionada > dataAtual){
                     span.innerText = `${campo.Nome} não pode ser futura`
                     span.style.color = 'red'
-                    contErros += 1
+                    valido = false
                 }  
                 else{
                     span.innerText = ''
                 }
             }
+        } else {
+            span.textContent = "";
         }
-    })
+    });
 
-    if(contErros > 0){
-        return false
-    } else {
-        return true
-    }
+    return valido;
 }
-form.addEventListener("submit", function (event) {
-    event.preventDefault()
-    if(validarinputs(campos) == true){
-        const tabelaVacinadosBody = document.querySelector('#tabela-dos-vacinados tbody')
-        const hoje = new Date(`${data.value} 03:00:00`).toLocaleDateString()
 
-        const linha = tabelaVacinadosBody.insertRow()
-        linha.innerHTML = `
-            <td class="text-center">${paciente.value}</td>
-            <td class="text-center">${aplicador.value}</td>
-            <td class="text-center">${hoje}</td>
-            <td class="text-center">${tipoVacina.value}</td>
-        `
-        tabelaVacinadosBody.appendChild(linha)
+// Submit do formulário
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+    
+    if (validaInputs(campos)) {
+        try {
+            const response = await fetch(URL_VACINACOES, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    pacienteId: paciente.value,
+                    aplicadorId: aplicador.value,
+                    data: data.value,
+                    vacinaId: tipoVacina.value
+                })
+            });
 
-        alert("Dados Salvos!");
+            if (!response.ok) throw new Error('Erro ao salvar vacinação');
 
-        // Limpa os inputs após inserção
-        paciente.value = ''
-        aplicador.value = ''
-        data.value = ''
-        tipoVacina.value = ''
-    } else {
-        alert('Erro ao enviar o formulário. Valide os campos inseridos');
+            alert("Vacinação registrada com sucesso!");
+            form.reset();
+            aplicador.innerHTML = '<option selected disabled value="">Selecione o aplicador</option>';
+            aplicador.disabled = true;
+            
+            // Recarregar dados se necessário
+        } catch (error) {
+            console.error('Erro:', error);
+            alert("Erro ao salvar os dados. Por favor, tente novamente.");
+        }
     }
-})
+});
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', carregarDadosIniciais);
