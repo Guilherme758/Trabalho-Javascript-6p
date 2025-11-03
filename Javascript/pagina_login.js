@@ -1,13 +1,4 @@
-var usuarios = [
-    {
-        "Email": "exemple@email.com",
-        "Senha": "123"
-    },
-    {
-        "Email": "exemple1@email.com",
-        "Senha": "1234"
-    }
-]
+import { APIBaseURL } from "./config.js"
 
 const emailDigitado = document.getElementById("email")
 const senhaDigitada = document.getElementById("senha")
@@ -20,23 +11,30 @@ formLogin.addEventListener('submit', function(event){
     const inputEmail = emailDigitado.value.trimEnd().trimStart().toLowerCase()
     const inputSenha = senhaDigitada.value
     
-    var isLogin = false
-
-    for(let i=0; i < usuarios.length; i++){
-        if(usuarios[i]['Email'] == inputEmail && usuarios[i]['Senha'] == inputSenha){
-            window.location.replace("index.html") // Redireciona o usuário para a página inicial
-            isLogin = true
-            break
-        } 
-        else
-        {
-            isLogin = false
-        }
-    }
-    if(!isLogin){
-        alert("Senha ou Email incorretos");
+    fetch(`${APIBaseURL}/auth/sign-in`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            email: inputEmail,
+            password: inputSenha,
+        })
+    })
+    .then(
+        response => {
+            if(response.status == 200){
+                response.json().then(
+                    token => {
+                        localStorage.setItem("access_token", token.access_token)
+                        window.location.replace("HTML/home.html") // Redireciona o usuário para a página inicial
+                    }
+                )
+            }
+            else{
+                alert("Senha ou Email incorretos");
         
-        //Limpa os inputs
-        senhaDigitada.value = ''
-    }
+                //Limpa os inputs
+                senhaDigitada.value = ''
+            }
+        }
+    )
 })

@@ -1,3 +1,5 @@
+import { APIBaseURL } from "./config.js";
+
 // Variáveis globais
 const modalBody = document.querySelector('#modal-vacina .modal-body');
 const modal = document.getElementById('modal-vacina');
@@ -7,7 +9,13 @@ const tbodyvacinas = document.querySelector('#tabela-vacinas > tbody')
 var idVacina = ''
 
 function getVacinas(){
-    const response = fetch("http://localhost:3000/vacinas")
+    const response = fetch(`${APIBaseURL}/vacinas`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
     return response
 }
 
@@ -210,19 +218,19 @@ function criaTabelaVacinas(ids = null) {
             const tdNome = document.createElement('td')
             tdNome.setAttribute("tipo", "nome")
             tdNome.classList.add("text-center")
-            tdNome.textContent = vacina.Nome
+            tdNome.textContent = vacina.nome
             linha.appendChild(tdNome)
 
             const tdDescricao = document.createElement('td')
             tdDescricao.setAttribute("tipo", "descricao")
             tdDescricao.classList.add("text-center")
-            tdDescricao.textContent = vacina.Descricao
+            tdDescricao.textContent = vacina.descricao
             linha.appendChild(tdDescricao)
 
             const tdObrigatoria = document.createElement('td')
             tdObrigatoria.setAttribute("tipo", "obrigatoria")
             tdObrigatoria.classList.add("text-center")
-            tdObrigatoria.textContent = vacina.Obrigatoria
+            tdObrigatoria.textContent = vacina.obrigatoria
             linha.appendChild(tdObrigatoria)
 
             const tdButtons = document.createElement('td')
