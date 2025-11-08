@@ -1,3 +1,5 @@
+import { APIBaseURL } from "./config.js";
+
 const form = document.getElementById('form-cadastro-vacinas')
 
 //Formulário
@@ -84,22 +86,32 @@ function validaInputs(){
 }
 
 function insertVacina(){
-    fetch("http://localhost:3000/vacinas", {
+    fetch(`${APIBaseURL}/vacinas`, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+            "Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        },
         body: JSON.stringify({
-            Nome: nome.value,
-            Descricao: descricao.value,
-            Obrigatoria: obrigatoria.value
+            nome: nome.value,
+            descricao: descricao.value,
+            obrigatoria: (obrigatoria.value === "Sim") ? true : false
         })
     })
-    .then(
-        alert("Vacina cadastrada!"),
-
-        // Limpa os inputs após inserção
-        nome.value = '',
-        descricao.value = '',
-        obrigatoria.value = ''
+    .then(response => {
+        if(response.status != 200){
+            alert("Erro ao cadastrar a vacina")
+        }
+        else{
+            alert("Vacina cadastrada!")
+        
+            // Limpa os inputs após inserção
+            nome.value = '',
+            descricao.value = '',
+            obrigatoria.value = ''
+        }
+        }
     )
 }
 

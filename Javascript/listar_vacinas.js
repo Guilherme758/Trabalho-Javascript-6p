@@ -20,25 +20,40 @@ function getVacinas(){
 }
 
 function getVacinaById(id){
-    const response = fetch(`http://localhost:3000/vacinas/${id}`)
+    const response = fetch(`${APIBaseURL}/vacinas/${id}`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
     return response
 }
 
 function deleteVacina(id){
-    const response = fetch(`http://localhost:3000/vacinas/${id}`, {
-        "method": "DELETE"
+    const response = fetch(`${APIBaseURL}/vacinas/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
     })
     return response
 }
 
 function updateVacina(id, data){
-    const response = fetch(`http://localhost:3000/vacinas/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+    const response = fetch(`${APIBaseURL}/vacinas/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        },
         body: JSON.stringify({ 
-            Nome: data.Nome, 
-            Descricao: data.Descricao, 
-            Obrigatoria: data.Obrigatoria
+            nome: data.nome, 
+            descricao: data.descricao, 
+            obrigatoria: data.obrigatoria
         })
     })
 
@@ -90,15 +105,15 @@ function botoesDeVisualizar() {
                         modalBody.innerHTML = ''
 
                         const pNome = document.createElement('p')
-                        pNome.innerText = `Nome: ${vacina.Nome}`
+                        pNome.innerText = `Nome: ${vacina.nome}`
                         modalBody.appendChild(pNome)
 
                         const pDescricao = document.createElement('p')
-                        pDescricao.innerText = `Descrição: ${vacina.Descricao}`
+                        pDescricao.innerText = `Descrição: ${vacina.descricao}`
                         modalBody.appendChild(pDescricao)
 
                         const pObrigatoria = document.createElement('p')
-                        pObrigatoria.innerText = `Obrigatória: ${vacina.Obrigatoria}`
+                        pObrigatoria.innerText = `Obrigatória: ${(vacina.obrigatoria === true ? "Sim" : "Não")}`
                         modalBody.appendChild(pObrigatoria)
 
                         // Abre o modal
@@ -230,7 +245,7 @@ function criaTabelaVacinas(ids = null) {
             const tdObrigatoria = document.createElement('td')
             tdObrigatoria.setAttribute("tipo", "obrigatoria")
             tdObrigatoria.classList.add("text-center")
-            tdObrigatoria.textContent = vacina.obrigatoria
+            tdObrigatoria.textContent = (vacina.obrigatoria === true) ? "Sim" : "Não"
             linha.appendChild(tdObrigatoria)
 
             const tdButtons = document.createElement('td')
@@ -291,7 +306,7 @@ inputFiltrarNome.addEventListener('change', function (event) {
     getVacinas().then(response => response.json()).then(vacinas => {
         if (texto != '') {
             const vacinasFiltradas = vacinas.filter(function (vacina) {
-                if (vacina.Nome.toLowerCase().includes(texto)) {
+                if (vacina.nome.toLowerCase().includes(texto)) {
                     return vacina
                 }
             })
@@ -327,11 +342,11 @@ formSubmitAtualizarvacina.addEventListener('submit', function (event) {
     const nome = document.getElementById('nome')
     const descricao = document.getElementById('descricao')
     const obrigatoria = document.getElementById('obrigatoria')
-   
-    data = {
-        "Nome": nome.value,
-        "Descricao": descricao.value,
-        "Obrigatoria": obrigatoria.value
+
+    let data = {
+        "nome": nome.value,
+        "descricao": descricao.value,
+        "obrigatoria": (obrigatoria.value === "Sim") ? true : false
     }
 
     updateVacina(idVacina, data).then(
