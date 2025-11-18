@@ -1,6 +1,6 @@
-// Funcionários "chumbados"
 
-// Variáveis globais
+import { APIBaseURL } from "./config.js";
+
 const modalBody = document.querySelector('#modal-funcionario .modal-body');
 const modal = document.getElementById('modal-funcionario');
 const buttonAtualizarFuncionario = document.getElementById('btn-atualizar-funcionario')
@@ -8,32 +8,56 @@ const formSubmitAtualizarFuncionario = document.querySelector('#modal-funcionari
 const tbodyFuncionarios = document.querySelector('#tabela-funcionarios > tbody')
 var idFuncionario = ''
 
-async function getFuncionarios(){
-    const response = await fetch("http://localhost:3000/funcionarios")
-    return await response.json()
+function getFuncionarios(){
+    const response = fetch(`${APIBaseURL}/funcionarios`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
+    return response
 }
 
 function getFuncionarioById(id){
-    const response = fetch(`http://localhost:3000/funcionarios/${id}`)
+    const response = fetch(`${APIBaseURL}/funcionarios/${id}`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
     return response
 }
 
 function deleteFuncionario(id){
-    const response = fetch(`http://localhost:3000/funcionarios/${id}`, {
-        "method": "DELETE"
+     const response = fetch(`${APIBaseURL}/funcionarios/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
     })
     return response
 }
 
 function updateFuncionario(id, data){
-    const response = fetch(`http://localhost:3000/funcionarios/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+     const response = fetch(`${APIBaseURL}/funcionarios/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        },
         body: JSON.stringify({ 
-            Nome: data.Nome, 
-            Registro: data.Registro, 
-            Cidade: data.Cidade, 
-            Email: data.Email
+            nome: data.nome, 
+            cpf: data.cpf, 
+            registro: data.registro,
+            sexo: data.sexo,
+            dataNascimento: data.DataNascimento,
+            cidade: data.Cidade,
+            email: data.Email
         })
     })
 
@@ -224,7 +248,10 @@ function botoesDeEditar() {
 
 // Insere todos os funcionários chumbados na tabela e cria também os botôes de Visualizar, Editar e Excluir
 function criaTabelaFuncionarios(ids = null) {
-    getFuncionarios().then(funcionarios => {
+    getFuncionarios()
+    .then(response => response.json())
+    .then(funcionarios => {
+
         tbodyFuncionarios.innerHTML = ''
         funcionarios.forEach(function(funcionario){
             if(ids != null && !ids.includes(funcionario.id)){
@@ -305,7 +332,10 @@ const inputFiltrarNome = document.getElementById('input-filtrar-nome')
 inputFiltrarNome.addEventListener('change', function (event) {
     const texto = inputFiltrarNome.value.toLowerCase().trimStart().trimEnd()
 
-    getFuncionarios().then(funcionarios => {
+    getFuncionarios()
+    .then(response => response.json())
+    .then(funcionarios => {
+
         if (texto != '') {
             const funcionariosFiltrados = funcionarios.filter(function (funcionario) {
                 if (funcionario.Nome.toLowerCase().includes(texto)) {
