@@ -1,17 +1,19 @@
-function getVacinacoesByPaciente(id){
-    return fetch(`http://localhost:3000/vacinacoes?pacienteId=${id}`)
+async function getVacinacoesByPaciente(id){
+    const response = await fetch(`http://localhost:8001/vacinacoes`)
+    const vacinacoes = await response.json()
+    return vacinacoes.filter(v => v.id_paciente === id)
 }
 
 function getFuncionarios(){
-    return fetch(`http://localhost:3000/funcionarios`)
+    return fetch(`http://localhost:8001/funcionarios`)
 }
 
 function getFuncionarioById(id){
-    return fetch(`http://localhost:3000/funcionarios/${id}`)
+    return fetch(`http://localhost:8001/funcionarios/${id}`)
 }
 
 function getVacinaById(id){
-    return fetch(`http://localhost:3000/vacinas/${id}`)
+    return fetch(`http://localhost:8001/vacinas/${id}`)
 }
 
 // Variáveis globais
@@ -20,10 +22,10 @@ const selectFuncionario = document.querySelector("#funcionario")
 
 // Insere todos as vacinas chumbadas de hoje na tabela
 function criaTabelaVacinas(idFuncionario) {
-    getVacinacoesByPaciente(idFuncionario).then(response => response.json()).then(vacinacoes => {
+    getVacinacoesByPaciente(idFuncionario).then(vacinacoes => {
         vacinacoes.forEach(function(vacinacao){
-            getFuncionarioById(vacinacao.aplicadorId).then(response => response.json()).then(aplicador => {
-                getVacinaById(vacinacao.vacinaId).then(response => response.json()).then(vacina => {
+            getFuncionarioById(vacinacao.id_aplicador).then(response => response.json()).then(aplicador => {
+                getVacinaById(vacinacao.id_vacina).then(response => response.json()).then(vacina => {
                     const linha = tbodyvacinas.insertRow();
 
                     const tdAplicador = document.createElement('td')
@@ -33,7 +35,7 @@ function criaTabelaVacinas(idFuncionario) {
 
                     const tdData = document.createElement('td')
                     tdData.classList.add('text-center')
-                    tdData.innerText = `${vacinacao.data}`
+                    tdData.innerText = `${vacinacao.data.split('T')[0]}`
                     linha.appendChild(tdData)
 
                     const tdVacina = document.createElement('td')

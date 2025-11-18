@@ -1,5 +1,5 @@
 // URLs centralizadas
-const API_URL = 'http://localhost:3000'
+const API_URL = 'http://localhost:8001' // Novo backend Python (FastAPI)
 const URL_FUNCIONARIOS = `${API_URL}/funcionarios`
 const URL_VACINAS = `${API_URL}/vacinas`
 const URL_VACINACOES = `${API_URL}/vacinacoes`
@@ -157,10 +157,10 @@ form.addEventListener("submit", async function(event) {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
-                    pacienteId: paciente.value,
-                    aplicadorId: aplicador.value,
+                    id_paciente: paciente.value,
+                    id_aplicador: aplicador.value,
                     data: data.value,
-                    vacinaId: tipoVacina.value
+                    id_vacina: tipoVacina.value
                 })
             })
 
