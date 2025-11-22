@@ -1,3 +1,4 @@
+import { APIBaseURL } from "./config.js";
 const form = document.getElementById('form-cadastro-funcionarios')
 
 const campos = [
@@ -104,17 +105,20 @@ function validaInputs(){
 }    
 
 function insertFuncionario(){
-    fetch("http://localhost:3000/funcionarios", {
+    fetch(`${APIBaseURL}/funcionarios`,{
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        },
         body: JSON.stringify({
-            Nome: nome.value,
-            Cpf: cpf.value,
-            Registro: registro.value,
-            Sexo: sexo.value,
-            DataNascimento: dataNascimento.value,
-            Cidade: cidade.value,
-            Email: email.value
+            nome: nome.value,
+            cpf: cpf.value,
+            registro: registro.value,
+            sexo: sexo.value,
+            dt_nascimento: dataNascimento.value,
+            cidade: cidade.value,
+            email: email.value
         })
     })
     .then(
