@@ -1,9 +1,25 @@
+import { APIBaseURL } from "./config.js";
+
 function getFuncionarios(){
-    return fetch("http://localhost:3000/funcionarios")
+    const response = fetch(`${APIBaseURL}/funcionarios`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
+    return response
 }
 
 function getVacinas(){
-    return fetch("http://localhost:3000/vacinas")
+    const response = fetch(`${APIBaseURL}/vacinas`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
+    return response
 }
 
 const form = document.getElementById('form-aplicacao-vacinas');
