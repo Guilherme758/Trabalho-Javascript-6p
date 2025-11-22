@@ -1,14 +1,16 @@
-function getVacinasAgendadasHoje(){
+async function getVacinasAgendadasHoje(){
     const hoje = new Date().toJSON().slice(0, 10)
-    return fetch(`http://localhost:3000/vacinas_agendadas?Data=${hoje}`)
+    const response = await fetch(`http://localhost:8001/vacinacoes`)
+    const vacinacoes = await response.json()
+    return vacinacoes.filter(v => v.data.slice(0, 10) === hoje)
 }
 
 function getFuncionarioById(id){
-    return fetch(`http://localhost:3000/funcionarios/${id}`)
+    return fetch(`http://localhost:8001/funcionarios/${id}`)
 }
 
 function getVacinaById(id){
-    return fetch(`http://localhost:3000/vacinas/${id}`)
+    return fetch(`http://localhost:8001/vacinas/${id}`)
 }
 
 // Variáveis globais
@@ -16,23 +18,23 @@ const tbodyvacinas = document.querySelector('#tabela-vacinas > tbody')
 
 // Insere todos as vacinas chumbadas de hoje na tabela
 function criaTabelaVacinas() {
-    getVacinasAgendadasHoje().then(response => response.json()).then(vacinas_agendadas => {
+    getVacinasAgendadasHoje().then(vacinas_agendadas => {
         vacinas_agendadas.forEach(function(vacina){
             let paciente;
             let aplicador;
             let vacinaAplicada;
 
-            getFuncionarioById(vacina.Paciente)
+            getFuncionarioById(vacina.id_paciente)
             .then(response => response.json()).then(Paciente => {
                 paciente = `${Paciente.Nome} - ${Paciente.Cpf}`
                 console.log(paciente)
                 
-                getFuncionarioById(vacina.Aplicador)
+                getFuncionarioById(vacina.id_aplicador)
                 .then(response => response.json()).then(Aplicador => {
                     aplicador = `${Aplicador.Nome} - ${Aplicador.Cpf}`
                     console.log(aplicador)
 
-                    getVacinaById(vacina.TipoVacina)
+                    getVacinaById(vacina.id_vacina)
                     .then(response => response.json()).then(tipoVacina => {
                         vacinaAplicada = `${tipoVacina.Nome}`
                         console.log(vacinaAplicada)
@@ -51,7 +53,7 @@ function criaTabelaVacinas() {
 
                         const tdData = document.createElement('td')
                         tdData.classList.add('text-center')
-                        tdData.innerText = vacina.Data
+                        tdData.innerText = vacina.data.split('T')[0]
                         linha.appendChild(tdData)
 
                         const tdTipoVacina = document.createElement('td')
