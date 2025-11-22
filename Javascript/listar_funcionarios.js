@@ -44,7 +44,7 @@ function deleteFuncionario(id){
 
 function updateFuncionario(id, data){
      const response = fetch(`${APIBaseURL}/funcionarios/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json",
             "accept": "application/json",
@@ -52,12 +52,9 @@ function updateFuncionario(id, data){
         },
         body: JSON.stringify({ 
             nome: data.nome, 
-            cpf: data.cpf, 
             registro: data.registro,
-            sexo: data.sexo,
-            dataNascimento: data.DataNascimento,
-            cidade: data.Cidade,
-            email: data.Email
+            cidade: data.cidade,
+            email: data.email
         })
     })
 
@@ -109,31 +106,31 @@ function botoesDeVisualizar() {
                         modalBody.innerHTML = ''
                         
                         const pNome = document.createElement('p')
-                        pNome.innerText = `Nome: ${funcionario.Nome}`
+                        pNome.innerText = `Nome: ${funcionario.nome}`
                         modalBody.appendChild(pNome)
 
                         const pCpf = document.createElement('p')
-                        pCpf.innerText = `CPF: ${funcionario.Cpf}`
+                        pCpf.innerText = `CPF: ${funcionario.cpf}`
                         modalBody.appendChild(pCpf)
 
                         const pRegistro = document.createElement('p')
-                        pRegistro.innerText = `Registro: ${funcionario.Registro}`
+                        pRegistro.innerText = `Registro: ${funcionario.registro}`
                         modalBody.appendChild(pRegistro)
 
                         const pSexo = document.createElement('p')
-                        pSexo.innerText = `Sexo: ${funcionario.Sexo}`
+                        pSexo.innerText = `Sexo: ${funcionario.sexo}`
                         modalBody.appendChild(pSexo)
 
                         const pDataNascimento = document.createElement('p')
-                        pDataNascimento.innerText = `Data Nascimento: ${funcionario.DataNascimento}`
+                        pDataNascimento.innerText = `Data Nascimento: ${funcionario.dt_nascimento}`
                         modalBody.appendChild(pDataNascimento)
 
                         const pCidade = document.createElement('p')
-                        pCidade.innerText = `Cidade: ${funcionario.Cidade}`
+                        pCidade.innerText = `Cidade: ${funcionario.cidade}`
                         modalBody.appendChild(pCidade)
 
                         const pEmail = document.createElement('p')
-                        pEmail.innerText = `Email: ${funcionario.Email}`
+                        pEmail.innerText = `Email: ${funcionario.email}`
                         modalBody.appendChild(pEmail)
 
                         // Abre o modal
@@ -264,19 +261,19 @@ function criaTabelaFuncionarios(ids = null) {
             const tdNome = document.createElement('td')
             tdNome.setAttribute("tipo", "nome")
             tdNome.classList.add("text-center")
-            tdNome.textContent = funcionario.Nome
+            tdNome.textContent = funcionario.nome
             linha.appendChild(tdNome)
 
             const tdCpf = document.createElement('td')
             tdCpf.setAttribute("tipo", "cpf")
             tdCpf.classList.add("text-center")
-            tdCpf.textContent = funcionario.Cpf
+            tdCpf.textContent = funcionario.cpf
             linha.appendChild(tdCpf)
 
             const tdRegistro = document.createElement('td')
             tdRegistro.setAttribute("tipo", "registro")
             tdRegistro.classList.add("text-center")
-            tdRegistro.textContent = funcionario.Registro
+            tdRegistro.textContent = funcionario.registro
             linha.appendChild(tdRegistro)
 
             const tdButtons = document.createElement('td')
@@ -338,7 +335,7 @@ inputFiltrarNome.addEventListener('change', function (event) {
 
         if (texto != '') {
             const funcionariosFiltrados = funcionarios.filter(function (funcionario) {
-                if (funcionario.Nome.toLowerCase().includes(texto)) {
+                if (funcionario.nome.toLowerCase().includes(texto)) {
                     return funcionario.id
                 }
             })
@@ -376,11 +373,11 @@ formSubmitAtualizarFuncionario.addEventListener('submit', function (event) {
     const cidade = document.getElementById('cidade')
     const email = document.getElementById('email')
 
-    data = {
-        "Nome": nome.value,
-        "Registro": registro.value,
-        "Cidade": cidade.value,
-        "Email": email.value
+    let data = {
+        "nome": nome.value,
+        "registro": registro.value,
+        "cidade": cidade.value,
+        "email": email.value
     }
 
     updateFuncionario(idFuncionario, data).then(
