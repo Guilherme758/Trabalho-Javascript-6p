@@ -1,8 +1,9 @@
+import { APIBaseURL } from "./config.js";
+
 // URLs centralizadas
-const API_URL = 'http://localhost:8001' // Novo backend Python (FastAPI)
-const URL_FUNCIONARIOS = `${API_URL}/funcionarios`
-const URL_VACINAS = `${API_URL}/vacinas`
-const URL_VACINACOES = `${API_URL}/vacinacoes`
+const URL_FUNCIONARIOS = `${APIBaseURL}/funcionarios`
+const URL_VACINAS = `${APIBaseURL}/vacinas`
+const URL_VACINACOES = `${APIBaseURL}/vacinacoes`
 
 // Elementos do DOM
 const form = document.getElementById('form-aplicacao-vacinas')
@@ -40,11 +41,23 @@ function adicionarOptionPadrao(selectElement, texto) {
 async function carregarDadosIniciais() {
     try {
         const [funcionarios, vacinas] = await Promise.all([
-            fetch(URL_FUNCIONARIOS).then(res => {
+            fetch(URL_FUNCIONARIOS, {
+                method: "GET",
+                headers: {
+                    "accept": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+                }
+            }).then(res => {
                 if (!res.ok) throw new Error('Erro ao carregar funcionários')
                 return res.json()
             }),
-            fetch(URL_VACINAS).then(res => {
+            fetch(URL_VACINAS, {
+                method: "GET",
+                headers: {
+                    "accept": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+                }
+            }).then(res => {
                 if (!res.ok) throw new Error('Erro ao carregar vacinas')
                 return res.json()
             })
@@ -66,7 +79,7 @@ function preencherSelects(funcionarios, vacinas) {
     vacinas.forEach(vacina => {
         const option = document.createElement('option')
         option.value = vacina.id
-        option.textContent = vacina.Nome
+        option.textContent = vacina.nome
         tipoVacina.appendChild(option)
     })
 
@@ -77,7 +90,7 @@ function preencherSelects(funcionarios, vacinas) {
     funcionarios.forEach(funcionario => {
         const option = document.createElement('option')
         option.value = funcionario.id
-        option.textContent = `${funcionario.Nome} (${funcionario.Cpf})`
+        option.textContent = `${funcionario.nome} (${funcionario.cpf})`
         paciente.appendChild(option)
     })
 
@@ -155,7 +168,11 @@ form.addEventListener("submit", async function(event) {
         try {
             const response = await fetch(URL_VACINACOES, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: {
+                    "Content-Type": "application/json",
+                    "accept": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+                },
                 body: JSON.stringify({
                     id_paciente: paciente.value,
                     id_aplicador: aplicador.value,
