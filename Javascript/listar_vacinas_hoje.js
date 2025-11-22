@@ -1,16 +1,36 @@
+import { APIBaseURL } from "./config.js";
+
 async function getVacinasAgendadasHoje(){
     const hoje = new Date().toJSON().slice(0, 10)
-    const response = await fetch(`http://localhost:8001/vacinacoes`)
+    const response = await fetch(`${APIBaseURL}/agendamentos_vacinas`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
     const vacinacoes = await response.json()
-    return vacinacoes.filter(v => v.data.slice(0, 10) === hoje)
+    return vacinacoes.filter(v => v.data_agendada.slice(0, 10) === hoje)
 }
 
 function getFuncionarioById(id){
-    return fetch(`http://localhost:8001/funcionarios/${id}`)
+    return fetch(`${APIBaseURL}/funcionarios/${id}`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
 }
 
 function getVacinaById(id){
-    return fetch(`http://localhost:8001/vacinas/${id}`)
+    return fetch(`${APIBaseURL}/vacinas/${id}`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
 }
 
 // Variáveis globais
@@ -24,19 +44,19 @@ function criaTabelaVacinas() {
             let aplicador;
             let vacinaAplicada;
 
-            getFuncionarioById(vacina.id_paciente)
+            getFuncionarioById(vacina.paciente_id)
             .then(response => response.json()).then(Paciente => {
-                paciente = `${Paciente.Nome} - ${Paciente.Cpf}`
+                paciente = `${Paciente.nome} - ${Paciente.cpf}`
                 console.log(paciente)
                 
-                getFuncionarioById(vacina.id_aplicador)
+                getFuncionarioById(vacina.aplicador_id)
                 .then(response => response.json()).then(Aplicador => {
-                    aplicador = `${Aplicador.Nome} - ${Aplicador.Cpf}`
+                    aplicador = `${Aplicador.nome} - ${Aplicador.cpf}`
                     console.log(aplicador)
 
-                    getVacinaById(vacina.id_vacina)
+                    getVacinaById(vacina.vacina_id)
                     .then(response => response.json()).then(tipoVacina => {
-                        vacinaAplicada = `${tipoVacina.Nome}`
+                        vacinaAplicada = `${tipoVacina.nome}`
                         console.log(vacinaAplicada)
 
                         const linha = tbodyvacinas.insertRow();
@@ -53,7 +73,7 @@ function criaTabelaVacinas() {
 
                         const tdData = document.createElement('td')
                         tdData.classList.add('text-center')
-                        tdData.innerText = vacina.data.split('T')[0]
+                        tdData.innerText = vacina.data_agendada.split('T')[0]
                         linha.appendChild(tdData)
 
                         const tdTipoVacina = document.createElement('td')

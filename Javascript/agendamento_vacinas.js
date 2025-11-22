@@ -124,7 +124,7 @@ getVacinas().then(response => response.json()).then(vacinas => {
     vacinas.forEach(function(vacina){
         const option = document.createElement('option')
         option.value = vacina.id
-        option.innerText = vacina.Nome
+        option.innerText = vacina.nome
         tipoVacina.appendChild(option)
     })
 })
@@ -133,7 +133,7 @@ getFuncionarios().then(response => response.json()).then(funcionarios => {
     funcionarios.forEach(function(funcionario){
         const option = document.createElement('option')
         option.value = funcionario.id
-        option.innerText = `${funcionario.Nome} - ${funcionario.Cpf}`
+        option.innerText = `${funcionario.nome} - ${funcionario.cpf}`
         paciente.appendChild(option)
     })
 })
@@ -158,14 +158,18 @@ paciente.addEventListener('change', function(event){
 form.addEventListener("submit", function (event) {
     event.preventDefault();
     if (validaInputs(campos)) {
-        fetch("http://localhost:3000/vacinas_agendadas", {
+        fetch(`${APIBaseURL}/agendamentos_vacinas`, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Content-Type": "application/json",
+                "accept": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+            },
             body: JSON.stringify({
-                Paciente: paciente.selectedOptions[0].value,
-                Aplicador: aplicador.selectedOptions[0].value,
-                Data: data.value,
-                TipoVacina: tipoVacina.selectedOptions[0].value
+                paciente_id: paciente.selectedOptions[0].value,
+                aplicador_id: aplicador.selectedOptions[0].value,
+                data_agendada: data.value,
+                vacina_id: tipoVacina.selectedOptions[0].value
             })
         })
         .then(
