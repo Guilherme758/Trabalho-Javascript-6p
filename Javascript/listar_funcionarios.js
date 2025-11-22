@@ -1,6 +1,6 @@
-// Funcionários "chumbados"
 
-// Variáveis globais
+import { APIBaseURL } from "./config.js";
+
 const modalBody = document.querySelector('#modal-funcionario .modal-body');
 const modal = document.getElementById('modal-funcionario');
 const buttonAtualizarFuncionario = document.getElementById('btn-atualizar-funcionario')
@@ -8,32 +8,53 @@ const formSubmitAtualizarFuncionario = document.querySelector('#modal-funcionari
 const tbodyFuncionarios = document.querySelector('#tabela-funcionarios > tbody')
 var idFuncionario = ''
 
-async function getFuncionarios(){
-    const response = await fetch("http://localhost:3000/funcionarios")
-    return await response.json()
+function getFuncionarios(){
+    const response = fetch(`${APIBaseURL}/funcionarios`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
+    return response
 }
 
 function getFuncionarioById(id){
-    const response = fetch(`http://localhost:3000/funcionarios/${id}`)
+    const response = fetch(`${APIBaseURL}/funcionarios/${id}`, {
+        method: "GET",
+        headers: {
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
+    })
     return response
 }
 
 function deleteFuncionario(id){
-    const response = fetch(`http://localhost:3000/funcionarios/${id}`, {
-        "method": "DELETE"
+     const response = fetch(`${APIBaseURL}/funcionarios/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        }
     })
     return response
 }
 
 function updateFuncionario(id, data){
-    const response = fetch(`http://localhost:3000/funcionarios/${id}`, {
+     const response = fetch(`${APIBaseURL}/funcionarios/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        },
         body: JSON.stringify({ 
-            Nome: data.Nome, 
-            Registro: data.Registro, 
-            Cidade: data.Cidade, 
-            Email: data.Email
+            nome: data.nome, 
+            registro: data.registro,
+            cidade: data.cidade,
+            email: data.email
         })
     })
 
@@ -85,31 +106,31 @@ function botoesDeVisualizar() {
                         modalBody.innerHTML = ''
                         
                         const pNome = document.createElement('p')
-                        pNome.innerText = `Nome: ${funcionario.Nome}`
+                        pNome.innerText = `Nome: ${funcionario.nome}`
                         modalBody.appendChild(pNome)
 
                         const pCpf = document.createElement('p')
-                        pCpf.innerText = `CPF: ${funcionario.Cpf}`
+                        pCpf.innerText = `CPF: ${funcionario.cpf}`
                         modalBody.appendChild(pCpf)
 
                         const pRegistro = document.createElement('p')
-                        pRegistro.innerText = `Registro: ${funcionario.Registro}`
+                        pRegistro.innerText = `Registro: ${funcionario.registro}`
                         modalBody.appendChild(pRegistro)
 
                         const pSexo = document.createElement('p')
-                        pSexo.innerText = `Sexo: ${funcionario.Sexo}`
+                        pSexo.innerText = `Sexo: ${funcionario.sexo}`
                         modalBody.appendChild(pSexo)
 
                         const pDataNascimento = document.createElement('p')
-                        pDataNascimento.innerText = `Data Nascimento: ${funcionario.DataNascimento}`
+                        pDataNascimento.innerText = `Data Nascimento: ${funcionario.dt_nascimento}`
                         modalBody.appendChild(pDataNascimento)
 
                         const pCidade = document.createElement('p')
-                        pCidade.innerText = `Cidade: ${funcionario.Cidade}`
+                        pCidade.innerText = `Cidade: ${funcionario.cidade}`
                         modalBody.appendChild(pCidade)
 
                         const pEmail = document.createElement('p')
-                        pEmail.innerText = `Email: ${funcionario.Email}`
+                        pEmail.innerText = `Email: ${funcionario.email}`
                         modalBody.appendChild(pEmail)
 
                         // Abre o modal
@@ -224,7 +245,10 @@ function botoesDeEditar() {
 
 // Insere todos os funcionários chumbados na tabela e cria também os botôes de Visualizar, Editar e Excluir
 function criaTabelaFuncionarios(ids = null) {
-    getFuncionarios().then(funcionarios => {
+    getFuncionarios()
+    .then(response => response.json())
+    .then(funcionarios => {
+
         tbodyFuncionarios.innerHTML = ''
         funcionarios.forEach(function(funcionario){
             if(ids != null && !ids.includes(funcionario.id)){
@@ -237,19 +261,19 @@ function criaTabelaFuncionarios(ids = null) {
             const tdNome = document.createElement('td')
             tdNome.setAttribute("tipo", "nome")
             tdNome.classList.add("text-center")
-            tdNome.textContent = funcionario.Nome
+            tdNome.textContent = funcionario.nome
             linha.appendChild(tdNome)
 
             const tdCpf = document.createElement('td')
             tdCpf.setAttribute("tipo", "cpf")
             tdCpf.classList.add("text-center")
-            tdCpf.textContent = funcionario.Cpf
+            tdCpf.textContent = funcionario.cpf
             linha.appendChild(tdCpf)
 
             const tdRegistro = document.createElement('td')
             tdRegistro.setAttribute("tipo", "registro")
             tdRegistro.classList.add("text-center")
-            tdRegistro.textContent = funcionario.Registro
+            tdRegistro.textContent = funcionario.registro
             linha.appendChild(tdRegistro)
 
             const tdButtons = document.createElement('td')
@@ -305,10 +329,13 @@ const inputFiltrarNome = document.getElementById('input-filtrar-nome')
 inputFiltrarNome.addEventListener('change', function (event) {
     const texto = inputFiltrarNome.value.toLowerCase().trimStart().trimEnd()
 
-    getFuncionarios().then(funcionarios => {
+    getFuncionarios()
+    .then(response => response.json())
+    .then(funcionarios => {
+
         if (texto != '') {
             const funcionariosFiltrados = funcionarios.filter(function (funcionario) {
-                if (funcionario.Nome.toLowerCase().includes(texto)) {
+                if (funcionario.nome.toLowerCase().includes(texto)) {
                     return funcionario.id
                 }
             })
@@ -346,11 +373,11 @@ formSubmitAtualizarFuncionario.addEventListener('submit', function (event) {
     const cidade = document.getElementById('cidade')
     const email = document.getElementById('email')
 
-    data = {
-        "Nome": nome.value,
-        "Registro": registro.value,
-        "Cidade": cidade.value,
-        "Email": email.value
+    let data = {
+        "nome": nome.value,
+        "registro": registro.value,
+        "cidade": cidade.value,
+        "email": email.value
     }
 
     updateFuncionario(idFuncionario, data).then(
